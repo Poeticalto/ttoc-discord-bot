@@ -1,0 +1,34 @@
+{
+  "name": "ttoc-discord-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Poeticalto/ttoc-discord-bot.git"
+  },
+  "author": "Poeticalto",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/Poeticalto/ttoc-discord-bot/issues"
+  },
+  "homepage": "https://github.com/Poeticalto/ttoc-discord-bot#readme",
+  "dependencies": {
+    "better-sqlite-pool": "^0.1.2",
+    "bufferutil": "^4.0.0",
+    "cat-ascii-faces": "^2.0.0",
+    "chalk": "^2.4.1",
+    "discord.js": "^11.4.2",
+    "enmap": "^4.3.2",
+    "erlpack": "github:hammerandchisel/erlpack",
+    "googleapis": "^27.0.0",
+    "moment": "^2.22.2",
+    "moment-duration-format": "^2.2.2",
+    "node-opus": "^0.3.0",
+    "request": "^2.88.0",
+    "uws": "^99.0.0"
+  }
+}
