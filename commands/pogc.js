@@ -1,5 +1,6 @@
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
   const emoji = client.emojis.find(emoji => emoji.name === "PogChamp");
+  message.delete();
   const msg = await message.channel.send(`${emoji}`);
 };
 
