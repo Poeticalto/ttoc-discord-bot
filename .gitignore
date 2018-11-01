@@ -67,3 +67,4 @@ config.json
 credentials.json
 data/
 sandbox.js
+teamRoles.json
