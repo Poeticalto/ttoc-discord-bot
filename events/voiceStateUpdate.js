@@ -1,52 +1,53 @@
 module.exports = async (client, oldMember, newMember) => {
 	var oldChannel = oldMember.voiceChannel;
 	var newChannel = newMember.voiceChannel;
-	if (typeof oldChannel == 'object')
-	{
-		oldChannel = oldChannel.toString();
-		oldChannel = oldChannel.substr(2, oldChannel.length-3);
-	}
-	if (typeof newChannel == 'object')
-	{
-		newChannel = newChannel.toString();
-		newChannel = newChannel.substr(2, newChannel.length-3);
-	}
-	var loungeList = ["Lounge A", "Lounge B", "Lounge C", "Lounge D", "Lounge E"];
-	//console.log(newMember.guild.channels.get(newChannel).name);
 	if (typeof oldChannel == 'undefined')
-	{ // user has connected to the voice channel
-		var newChannelName = newMember.guild.channels.get(newChannel).name;
-		if (loungeList.indexOf(newChannelName) > -1)
+	{ // user has connected to a voice channel
+		var newChannelName = newChannel.name;
+		if (newChannel.parent.name === "General Lounges")
 		{
-			var newRole = newMember.guild.roles.find(r => r.name === newChannelName);
-			newMember.addRole(newRole);
+			addPermissions(newMember, newChannelName);
 		}
 	}
 	else if (typeof newChannel == 'undefined')
-	{ // user has disconnected from the voice channel
-		var oldChannelName = newMember.guild.channels.get(oldChannel).name;
-		if (loungeList.indexOf(oldChannelName) > -1)
+	{ // user has disconnected from a voice channel
+		var oldChannelName = oldChannel.name;
+		if (oldChannel.parent.name === "General Lounges")
 		{
-			var removeRole = oldMember.guild.roles.find(r => r.name === oldChannelName);
-			newMember.removeRole(removeRole);
+			removePermissions(newMember, oldChannelName);
 		}
 	}
 	else if (typeof oldChannel !== 'undefined' && typeof newChannel !== 'undefined')
 	{ // user has switched voice channels
-		var checkOldChannelName = newMember.guild.channels.get(oldChannel).name;
-		if (loungeList.indexOf(checkOldChannelName) > -1)
+		var checkOldChannelName = oldChannel.name;
+		if (oldChannel.parent.name === "General Lounges")
 		{
-			var removeRole = oldMember.guild.roles.find(r => r.name === checkOldChannelName);
-			newMember.removeRole(removeRole);
+			removePermissions(newMember, checkOldChannelName);
 		}
-		var checkNewChannelName = newMember.guild.channels.get(newChannel).name;
-		if (loungeList.indexOf(checkNewChannelName) > -1)
+		var checkNewChannelName = newChannel.name;
+		if (newChannel.parent.name === "General Lounges")
 		{
-			var newRole = newMember.guild.roles.find(r => r.name === checkNewChannelName);
-			newMember.addRole(newRole);
+			addPermissions(newMember, checkNewChannelName);
 		}
 	}
-	
-	
-	
+}
+
+function addPermissions(newMember, newChannelName)
+{
+	var newChannelEdit = newMember.guild.channels.find(channel => channel.name === newChannelName.replace(" ","-").toLowerCase());
+	newChannelEdit.overwritePermissions(newMember,
+	{
+		"READ_MESSAGES": true
+	}
+	);
+}
+
+function removePermissions(oldMember, oldChannelName)
+{
+	var oldChannelEdit = oldMember.guild.channels.find(channel => channel.name === oldChannelName.replace(" ","-").toLowerCase());
+	oldChannelEdit.overwritePermissions(oldMember,
+	{
+		"READ_MESSAGES": null
+	}
+	);
 }
