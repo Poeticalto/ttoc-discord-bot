@@ -45,9 +45,5 @@ function addPermissions(newMember, newChannelName)
 function removePermissions(oldMember, oldChannelName)
 {
 	var oldChannelEdit = oldMember.guild.channels.find(channel => channel.name === oldChannelName.replace(" ","-").toLowerCase());
-	oldChannelEdit.overwritePermissions(oldMember,
-	{
-		"READ_MESSAGES": null
-	}
-	);
+	oldChannelEdit.permissionOverwrites.get(oldMember.id).delete();
 }
