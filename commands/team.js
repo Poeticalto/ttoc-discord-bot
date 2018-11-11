@@ -4,7 +4,7 @@ var pathToTeamRoles = path.join(__dirname, '../teamRoles.json');
 var teamRoles = require(pathToTeamRoles);
 
 exports.run = async (client, message, args, level) => {
-	if (!args || args.length < 2) return message.reply("\nSorry, you didn't provide enough arguments.\nTry this: !team [abbr] @player");
+	if (!args || args.length < 2) return message.channel.send("\nSorry, you didn't provide enough arguments.\nTry this: !team [abbr] @player");
 	var [abbrProcess] = args.splice(0);
 	var author = message.author.tag;
 	var memberEdit = message.mentions.members.first();
@@ -35,7 +35,7 @@ exports.run = async (client, message, args, level) => {
 
 exports.conf = {
   enabled: true,
-  guildOnly: false,
+  guildOnly: true,
   aliases: [],
   permLevel: "User"
 };
