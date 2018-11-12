@@ -14,7 +14,7 @@ module.exports = async (client, oldMember, newMember) => {
 			{
 				addRolePermissions(newMember.guild.defaultRole, newChannel);
 			}
-			addPermissions(newMember, newChannelName.substr(0,4).toLowerCase()+"-voice");
+			addPermissions(newMember, newChannelName.split("-")[0].replace(/ /g,"_").toLowerCase()+"-voice");
 		}
 	}
 	else if (typeof newChannel == 'undefined')
@@ -30,7 +30,7 @@ module.exports = async (client, oldMember, newMember) => {
 			{
 				removeRolePermissions(newMember.guild.defaultRole, oldChannel);
 			}
-			removePermissions(newMember, oldChannelName.substr(0,4).toLowerCase()+"-voice");
+			removePermissions(newMember, oldChannelName.split("-")[0].replace(/ /g,"_").toLowerCase()+"-voice");
 		}
 	}
 	else if (typeof oldChannel !== 'undefined' && typeof newChannel !== 'undefined')
@@ -46,7 +46,7 @@ module.exports = async (client, oldMember, newMember) => {
 			{
 				removeRolePermissions(newMember.guild.defaultRole, oldChannel);
 			}
-			removePermissions(newMember, checkOldChannelName.substr(0,4).toLowerCase()+"-voice");
+			removePermissions(newMember, checkOldChannelName.split("-")[0].replace(/ /g,"_").toLowerCase()+"-voice");
 		}
 		var checkNewChannelName = newChannel.name;
 		if (newChannel.parent.name === "General Lounges")
@@ -59,7 +59,7 @@ module.exports = async (client, oldMember, newMember) => {
 			{
 				addRolePermissions(newMember.guild.defaultRole, newChannel);
 			}
-			addPermissions(newMember, checkNewChannelName.substr(0,4).toLowerCase()+"-voice");
+			addPermissions(newMember, checkNewChannelName.split("-")[0].replace(/ /g,"_").toLowerCase()+"-voice");
 		}
 	}
 }
