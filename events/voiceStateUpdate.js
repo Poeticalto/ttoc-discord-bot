@@ -8,6 +8,10 @@ module.exports = async (client, oldMember, newMember) => {
 		{
 			addPermissions(newMember, newChannelName);
 		}
+		else if (newChannel.parent.name === "NFTL")
+		{
+			addRolePermissions(newMember.guild.defaultRole, newChannel);
+		}
 	}
 	else if (typeof newChannel == 'undefined')
 	{ // user has disconnected from a voice channel
@@ -15,6 +19,13 @@ module.exports = async (client, oldMember, newMember) => {
 		if (oldChannel.parent.name === "General Lounges")
 		{
 			removePermissions(newMember, oldChannelName);
+		}
+		else if (oldChannel.parent.name === "NFTL")
+		{
+			if (oldChannel.members.keyArray().length === 0)
+			{
+				removeRolePermissions(newMember.guild.defaultRole, oldChannel);
+			}
 		}
 	}
 	else if (typeof oldChannel !== 'undefined' && typeof newChannel !== 'undefined')
@@ -24,10 +35,21 @@ module.exports = async (client, oldMember, newMember) => {
 		{
 			removePermissions(newMember, checkOldChannelName);
 		}
+		else if (oldChannel.parent.name === "NFTL")
+		{
+			if (oldChannel.members.keyArray().length === 0)
+			{
+				removeRolePermissions(newMember.guild.defaultRole, oldChannel);
+			}
+		}
 		var checkNewChannelName = newChannel.name;
 		if (newChannel.parent.name === "General Lounges")
 		{
 			addPermissions(newMember, checkNewChannelName);
+		}
+		else if (newChannel.parent.name === "NFTL")
+		{
+			addRolePermissions(newMember.guild.defaultRole, newChannel);
 		}
 	}
 }
@@ -38,12 +60,27 @@ function addPermissions(newMember, newChannelName)
 	newChannelEdit.overwritePermissions(newMember,
 	{
 		"READ_MESSAGES": true
-	}
-	);
+	});
+}
+
+function addRolePermissions(defaultRole, newChannel)
+{
+	newChannel.overwritePermissions(defaultRole,
+	{
+		"VIEW_CHANNEL": true
+	});
 }
 
 function removePermissions(oldMember, oldChannelName)
 {
 	var oldChannelEdit = oldMember.guild.channels.find(channel => channel.name === oldChannelName.replace(" ","-").toLowerCase());
 	oldChannelEdit.permissionOverwrites.get(oldMember.id).delete();
+}
+
+function removeRolePermissions(defaultRole, newChannel)
+{
+	newChannel.overwritePermissions(defaultRole,
+	{
+		"VIEW_CHANNEL": false
+	});
 }
