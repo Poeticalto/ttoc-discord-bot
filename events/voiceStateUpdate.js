@@ -10,7 +10,11 @@ module.exports = async (client, oldMember, newMember) => {
 		}
 		else if (newChannel.parent.name === "NFTL")
 		{
-			addRolePermissions(newMember.guild.defaultRole, newChannel);
+			if (newChannel.members.keyArray().length === 1)
+			{
+				addRolePermissions(newMember.guild.defaultRole, newChannel);
+			}
+			addPermissions(newMember, newChannelName.substr(0,4).toLowerCase()+"-voice");
 		}
 	}
 	else if (typeof newChannel == 'undefined')
@@ -26,6 +30,7 @@ module.exports = async (client, oldMember, newMember) => {
 			{
 				removeRolePermissions(newMember.guild.defaultRole, oldChannel);
 			}
+			removePermissions(newMember, oldChannelName.substr(0,4).toLowerCase()+"-voice");
 		}
 	}
 	else if (typeof oldChannel !== 'undefined' && typeof newChannel !== 'undefined')
@@ -41,6 +46,7 @@ module.exports = async (client, oldMember, newMember) => {
 			{
 				removeRolePermissions(newMember.guild.defaultRole, oldChannel);
 			}
+			removePermissions(newMember, checkOldChannelName.substr(0,4).toLowerCase()+"-voice");
 		}
 		var checkNewChannelName = newChannel.name;
 		if (newChannel.parent.name === "General Lounges")
@@ -49,7 +55,11 @@ module.exports = async (client, oldMember, newMember) => {
 		}
 		else if (newChannel.parent.name === "NFTL")
 		{
-			addRolePermissions(newMember.guild.defaultRole, newChannel);
+			if (newChannel.members.keyArray().length === 1)
+			{
+				addRolePermissions(newMember.guild.defaultRole, newChannel);
+			}
+			addPermissions(newMember, checkNewChannelName.substr(0,4).toLowerCase()+"-voice");
 		}
 	}
 }
