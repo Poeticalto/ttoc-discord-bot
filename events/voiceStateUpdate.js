@@ -66,7 +66,7 @@ module.exports = async (client, oldMember, newMember) => {
 
 function addPermissions(newMember, newChannelName)
 {
-	var newChannelEdit = newMember.guild.channels.find(channel => channel.name === newChannelName.replace(" ","-").toLowerCase());
+	var newChannelEdit = newMember.guild.channels.find(channel => channel.name === newChannelName.replace(/ /g,"_").toLowerCase());
 	newChannelEdit.overwritePermissions(newMember,
 	{
 		"READ_MESSAGES": true
@@ -83,7 +83,7 @@ function addRolePermissions(defaultRole, newChannel)
 
 function removePermissions(oldMember, oldChannelName)
 {
-	var oldChannelEdit = oldMember.guild.channels.find(channel => channel.name === oldChannelName.replace(" ","-").toLowerCase());
+	var oldChannelEdit = oldMember.guild.channels.find(channel => channel.name === oldChannelName.replace(/ /g,"_").toLowerCase());
 	oldChannelEdit.permissionOverwrites.get(oldMember.id).delete();
 }
 
