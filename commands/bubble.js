@@ -2,6 +2,7 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
 	if (!args || args.length < 1) return message.channel.send("\nSorry, you didn't provide enough arguments.\nTry this: !bubble [text]");
 	var array = args.join(" ");
 	array = array.split("");
+	message.delete();
 	var newMessage = "";
 	for (var i = 0; i < array.length; i++)
 	{
@@ -63,14 +64,14 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
 			newMessage += currentLetter + " ";
 		}
 	}
+	newMessage += "- " + message.author.username;
 	message.channel.send(newMessage);
-	message.delete();
 };
 
 exports.conf = {
   enabled: true,
   guildOnly: false,
-  aliases: [],
+  aliases: ["b"],
   permLevel: "user"
 };
 
