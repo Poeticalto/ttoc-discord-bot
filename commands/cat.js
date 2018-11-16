@@ -6,8 +6,6 @@ var cats = require(pathToCatLinks);
 
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
 	var randomCat = Math.floor(Math.random() * Math.floor(Object.keys(cats).length-1));
-	console.log(randomCat);
-	console.log(cats[randomCat]["Link"]);
 	const exampleEmbed = new Discord.RichEmbed()
 		.setColor('RANDOM')
 		.setImage(cats[randomCat]["Link"])
