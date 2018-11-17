@@ -1,5 +1,5 @@
 const fs = require("fs");
-path = require('path')
+const path = require('path');
 var pathToUserGroups = path.join(__dirname, '../usergroups.json');
 var userGroups = require(pathToUserGroups);
 
