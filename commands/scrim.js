@@ -16,22 +16,26 @@ exports.run = async (client, message, args, level) => {
 				message.channel.send(channelName[0] + " removed from scrim list!");
 				scrimList[message.channel.parent.name].splice(teamIndex, 1);
 				fs.writeFile(pathToScrimList, JSON.stringify(scrimList, null, 4), 'utf8');
+				updateScrimList(scrimList, message.guild);
 			}
 			else
 			{
 				scrimList[message.channel.parent.name].push(channelName[0]);
 				fs.writeFile(pathToScrimList, JSON.stringify(scrimList, null, 4), 'utf8');
 				message.channel.send(channelName[0] + " added to scrim list!");
+				updateScrimList(scrimList, message.guild);
 			}
 		}
 		else
 		{
 			checkPlayer(message.author.username, scrimList, message);
+			updateScrimList(scrimList, message.guild);
 		}
 	}
 	else
 	{
 		checkPlayer(message.author.username, scrimList, message);
+		updateScrimList(scrimList, message.guild);
 	}
 };
 
@@ -50,6 +54,38 @@ function checkPlayer(username, scrimList, message)
 		fs.writeFile(pathToScrimList, JSON.stringify(scrimList, null, 4), 'utf8');
 		message.channel.send(username + " added to scrim list!");
 	}
+}
+
+function updateScrimList(scrimList, guild)
+{
+	var scrimChannel = guild.channels.find(channel => channel.name === "looking-for-scrim");
+	//var mltpList = concatTeams("MLTP", scrimList);
+	//var nltpList = concatTeams("NLTP", scrimList);
+	var nftlList = concatTeams("NFTL", scrimList);
+	//var uscList = concatTeams("USC", scrimList);
+	var playerList = concatTeams("Players", scrimList);
+	scrimChannel.setTopic("Available Players/Teams\nNFTL: " + nftlList + "\nPlayers: " + playerList);
+}
+
+function concatTeams(league, scrimList)
+{
+	var concatString = "";
+	for (var i = 0; i < scrimList[league].length; i++)
+	{
+		if (i < (scrimList[league].length -1))
+		{
+			concatString += scrimList[league][i] + ", ";
+		}
+		else
+		{
+			concatString += scrimList[league][i];
+		}
+	}
+	if (concatString === "")
+	{
+		concatString += "None";
+	}
+	return concatString;
 }
 
 exports.conf = {
