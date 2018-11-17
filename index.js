@@ -50,7 +50,7 @@ const init = async () => {
 
   // Here we login the client.
   client.login(client.config.discordToken);
-
+  
 // End top-level async/await function.
 };
 
