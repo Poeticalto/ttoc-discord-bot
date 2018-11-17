@@ -37,7 +37,6 @@ exports.run = async (client, message, args, level) => {
 
 function checkPlayer(username, scrimList, message)
 {
-	console.log("enter player check");
 	var playerIndex = scrimList["Players"].indexOf(username);
 	if (playerIndex > -1)
 	{
