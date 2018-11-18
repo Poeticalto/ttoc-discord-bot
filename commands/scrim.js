@@ -10,19 +10,20 @@ exports.run = async (client, message, args, level) => {
 		var channelName = message.channel.name.split("-");
 		if (channelName[1] === "voice")
 		{
-			var teamIndex = scrimList[message.channel.parent.name].indexOf(channelName[0]);
+			var teamName = channelName[0].split('_').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+			var teamIndex = scrimList[message.channel.parent.name].indexOf(teamName);
 			if (teamIndex > -1)
 			{
-				message.channel.send(channelName[0] + " removed from scrim list!");
+				message.channel.send(teamName + " removed from scrim list!");
 				scrimList[message.channel.parent.name].splice(teamIndex, 1);
 				fs.writeFile(pathToScrimList, JSON.stringify(scrimList, null, 4), 'utf8');
 				updateScrimList(scrimList, message.guild);
 			}
 			else
 			{
-				scrimList[message.channel.parent.name].push(channelName[0]);
+				scrimList[message.channel.parent.name].push(teamName);
 				fs.writeFile(pathToScrimList, JSON.stringify(scrimList, null, 4), 'utf8');
-				message.channel.send(channelName[0] + " added to scrim list!");
+				message.channel.send(teamName + " added to scrim list!");
 				updateScrimList(scrimList, message.guild);
 			}
 		}
