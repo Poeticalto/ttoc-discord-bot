@@ -3,7 +3,7 @@ const emojiTree = require('emoji-tree');
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
   	if (!args || args.length < 1) return message.channel.send("\nSorry, you didn't provide enough arguments.\nTry this: !react [text]");
 	console.log(message.author.username + " did !react command with args " + args.join(" "));
-	var reactionAdd = args.join("");
+	var reactionAdd = args.join("").toLowerCase();
 	var splitArray = reactionAdd.split("");
   message.channel.fetchMessages({limit: 2}).then(messages => {
 	  var lastID = messages.keyArray();
@@ -11,20 +11,30 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 		  message.delete();
 		  var parseArray = emojiTree(reactionAdd);
 		  var emojiCount = 0;
-		  for (var i = 0; i < parseArray.length; i++)
+		  var letterCount = 0;
+		  var parseArrayLength = parseArray.length;
+		  for (var i = 0; i < parseArrayLength; i++)
 		  {
 			if (parseArray[i]["text"].match(/[a-z]/i))
 			{				
 				var checkLetters = splitArray.slice(0,i + emojiCount);
 				if (checkLetters.includes(parseArray[i]["text"]) === false)
 				{
-					await messagea.react(getUnicodeChar(parseArray[i]["text"]));
+					if (letterCount < 20)
+					{
+						await messagea.react(getUnicodeChar(parseArray[i]["text"]));
+						letterCount++;
+					}
 				}
 			}
 			else if (parseArray[i]["type"] === 'emoji')
 			{
-				await messagea.react(parseArray[i]["text"]);
-				emojiCount++;
+				if (letterCount < 20)
+				{
+					await messagea.react(parseArray[i]["text"]);
+					emojiCount++;
+					letterCount++;
+				}
 			}
 		  }
 	  });
