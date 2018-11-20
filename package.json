@@ -22,6 +22,7 @@
     "cat-ascii-faces": "^2.0.0",
     "chalk": "^2.4.1",
     "discord.js": "^11.4.2",
+    "emoji-tree": "^1.1.2",
     "enmap": "^4.3.2",
     "erlpack": "github:hammerandchisel/erlpack",
     "googleapis": "^27.0.0",
