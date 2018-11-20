@@ -10,11 +10,6 @@ module.exports = async (client, message) => {
   // Grab the settings for this server from Enmap.
   // If there is no guild, get default conf (DMs)
   const settings = message.settings = client.getSettings(message.guild.id);
-
-  if (message.channel.name === "nltp-crc")
-  {
-	  message.react('❤');
-  }
   
   // Checks if the bot was mentioned, with no message after it, returns the prefix.
   const prefixMention = new RegExp(`^<@!?${client.user.id}>( |)$`);
