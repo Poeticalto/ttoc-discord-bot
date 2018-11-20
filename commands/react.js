@@ -2,6 +2,7 @@ const emojiTree = require('emoji-tree');
 
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
   	if (!args || args.length < 1) return message.channel.send("\nSorry, you didn't provide enough arguments.\nTry this: !react [text]");
+	console.log(message.author.username + " did !react command with args " + args.join(" "));
 	var reactionAdd = args.join("");
 	var splitArray = reactionAdd.split("");
   message.channel.fetchMessages({limit: 2}).then(messages => {
