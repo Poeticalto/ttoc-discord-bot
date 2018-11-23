@@ -8,14 +8,6 @@ module.exports = async (client, oldMember, newMember) => {
 		{
 			addPermissions(newMember, newChannelName);
 		}
-		else if (newChannel.parent.name === "NFTL")
-		{
-			if (newChannel.members.keyArray().length === 1)
-			{
-				addRolePermissions(newMember.guild.defaultRole, newChannel);
-			}
-			addPermissions(newMember, newChannelName.split("-")[0].replace(/ /g,"_").toLowerCase()+"-voice");
-		}
 	}
 	else if (typeof newChannel == 'undefined')
 	{ // user has disconnected from a voice channel
@@ -23,14 +15,11 @@ module.exports = async (client, oldMember, newMember) => {
 		if (oldChannel.parent.name === "General Lounges")
 		{
 			removePermissions(newMember, oldChannelName);
-		}
-		else if (oldChannel.parent.name === "NFTL")
-		{
+			processRole("Lounge Admin", newMember, newMember.guild);
 			if (oldChannel.members.keyArray().length === 0)
 			{
-				removeRolePermissions(newMember.guild.defaultRole, oldChannel);
+				deleteChannels(newMember, oldChannelName);
 			}
-			removePermissions(newMember, oldChannelName.split("-")[0].replace(/ /g,"_").toLowerCase()+"-voice");
 		}
 	}
 	else if (typeof oldChannel !== 'undefined' && typeof newChannel !== 'undefined')
@@ -39,27 +28,15 @@ module.exports = async (client, oldMember, newMember) => {
 		if (oldChannel.parent.name === "General Lounges")
 		{
 			removePermissions(newMember, checkOldChannelName);
-		}
-		else if (oldChannel.parent.name === "NFTL")
-		{
 			if (oldChannel.members.keyArray().length === 0)
 			{
-				removeRolePermissions(newMember.guild.defaultRole, oldChannel);
+				deleteChannels(newMember, checkOldChannelName);
 			}
-			removePermissions(newMember, checkOldChannelName.split("-")[0].replace(/ /g,"_").toLowerCase()+"-voice");
 		}
 		var checkNewChannelName = newChannel.name;
 		if (newChannel.parent.name === "General Lounges")
 		{
 			addPermissions(newMember, checkNewChannelName);
-		}
-		else if (newChannel.parent.name === "NFTL")
-		{
-			if (newChannel.members.keyArray().length === 1)
-			{
-				addRolePermissions(newMember.guild.defaultRole, newChannel);
-			}
-			addPermissions(newMember, checkNewChannelName.split("-")[0].replace(/ /g,"_").toLowerCase()+"-voice");
 		}
 	}
 }
@@ -81,6 +58,26 @@ function addRolePermissions(defaultRole, newChannel)
 	});
 }
 
+function deleteChannels(newMember, oldChannelName)
+{
+	setTimeout(function(){
+		var voiceChannelCheck = newMember.guild.channels.find(channel => channel.name === oldChannelName);
+		if (voiceChannelCheck === null && typeof voiceChannelCheck === "object")
+		{
+			//insert code here
+		}
+		else
+		{
+			if (voiceChannelCheck.members.keyArray().length === 0)
+			{
+				voiceChannelCheck.delete();
+				newMember.guild.channels.find(channel => channel.name === (oldChannelName.replace(/ /g,"_").toLowerCase())).delete();
+				newMember.removeRole(roleToCheck).catch(console.error);
+			}
+		}
+		}, 30*1000);
+}
+
 function removePermissions(oldMember, oldChannelName)
 {
 	var oldChannelEdit = oldMember.guild.channels.find(channel => channel.name === oldChannelName.replace(/ /g,"_").toLowerCase());
@@ -93,4 +90,13 @@ function removeRolePermissions(defaultRole, newChannel)
 	{
 		"VIEW_CHANNEL": false
 	});
+}
+
+function processRole(abbrProcess, memberEdit, guild)
+{
+	roleToCheck = guild.roles.find(role => role.name === abbrProcess);
+	if (memberEdit.roles.has(roleToCheck.id))
+	{
+		memberEdit.removeRole(roleToCheck).catch(console.error);
+	}
 }
