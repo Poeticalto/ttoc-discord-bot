@@ -1,19 +1,19 @@
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
-  message.delete();
-  const emoji = client.emojis.find(emoji => emoji.name === "PogU");
-  const msg = await message.channel.send(`${emoji}`);
+    const emoji = client.emojis.find(emoji => emoji.name === "PogChamp");
+    message.delete();
+    const msg = await message.channel.send(`${emoji}`);
 };
 
 exports.conf = {
-  enabled: true,
-  guildOnly: false,
-  aliases: [],
-  permLevel: "User"
+    enabled: true,
+    guildOnly: false,
+    aliases: ["pogchamp"],
+    permLevel: "User"
 };
 
 exports.help = {
-  name: "pogu",
-  category: "Miscelaneous",
-  description: "Sends the :PogU: emote",
-  usage: "pogu"
+    name: "pogc",
+    category: "Miscelaneous",
+    description: "Sends the :PogChamp: emote",
+    usage: "pogc"
 };

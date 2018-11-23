@@ -4,111 +4,111 @@ var pathToUserGroups = path.join(__dirname, '../usergroups.json');
 var userGroups = require(pathToUserGroups);
 
 exports.run = async (client, message, args, level) => {
-	if (!args || args.length < 4) return message.reply("\nSorry, you didn't provide enough arguments.\nTry this: !register [Position] [Mic] [Ping] [tagproName]");
-	var [positionProcess, micProcess, pingProcess, ...tagproName] = args.splice(0);
-	tagproName = tagproName.join(" ");
-	var author = message.author.tag;
-	var tournamentUsersList = Object.keys(userGroups.tournamentUsers);
-	if (tournamentUsersList.indexOf(author) === -1)
-	{
-		var registerCheck = 0;
-		var warning = "";
-		positionProcess = positionProcess.toLowerCase();
-		console.log(positionProcess);
-		// check the position
-		if (positionProcess == "o" || positionProcess == "offense")
-		{
-			positionProcess = "O";
-			registerCheck++;
-		}
-		else if (positionProcess == "o/d" || positionProcess == "offense/defense")
-		{
-			positionProcess = "O/D";
-			registerCheck++;
-		}
-		else if (positionProcess == "b" || positionProcess == "both")
-		{
-			positionProcess = "Both";
-			registerCheck++;
-		}
-		else if (positionProcess == "d/o" || positionProcess == "defense/offense")
-		{
-			positionProcess = "D/O";
-			registerCheck++;
-		}
-		else if (positionProcess == "d" || positionProcess == "defense")
-		{
-			positionProcess = "D";
-			registerCheck++;
-		}
-		else
-		{
-			warning += "\nYour position was not detected. Please use one of the following: O, O/D, Both, D/O, D.";
-		}
-		// check the mic
-		micProcess = micProcess.toLowerCase();
-		console.log(micProcess);
-		if (micProcess == "yes" || micProcess == "y")
-		{
-			micProcess = "Yes";
-			registerCheck++;
-		}
-		else if (micProcess == "no" || micProcess == "n")
-		{
-			micProcess = "No";
-			registerCheck++;
-		}
-		else
-		{
-			warning += "\nYour mic status was not detected. Please use Yes if you have a mic or No if you do not.";
-		}
-		// check the ping
-		console.log(pingProcess);
-		console.log(tagproName);
-		if (isNaN(pingProcess) === false)
-		{
-			pingProcess = Math.floor(pingProcess);
-			if (pingProcess > 0 && pingProcess <= 300)
-			{
-				registerCheck++;
-			}
-			else
-			{
-				warning += "\nYour ping seems to be slightly exaggerated. Please use a number between 1 and 300.";
-			}
-		}
-		else
-		{
-			warning += "\nYour ping was not detected. Please use an integer between 1 and 300.";
-		}
-		if (registerCheck == 3)
-		{
-			userGroups.tournamentUsers[author] = {"tagproName":tagproName, "position":positionProcess, "mic":micProcess, "ping":pingProcess};
-			fs.writeFile(pathToUserGroups, JSON.stringify(userGroups, null, 4), 'utf8');
-			return message.reply("Your information has been added! You can now use the !signup command to sign up for tournaments!");
-			console.log("complete");
-		}
-		else
-		{
-			return message.reply(warning + "\nPlease use the following format: !register [position] [mic] [ping] [tagproName]");
-		}
-	}
-	else
-	{
-		return message.reply("Sorry, your information is already saved! Use !signup to sign up for tournaments!");
-	}
+    if (!args || args.length < 4) return message.reply("\nSorry, you didn't provide enough arguments.\nTry this: !register [Position] [Mic] [Ping] [tagproName]");
+    var [positionProcess, micProcess, pingProcess, ...tagproName] = args.splice(0);
+    tagproName = tagproName.join(" ");
+    var author = message.author.tag;
+    var tournamentUsersList = Object.keys(userGroups.tournamentUsers);
+    if (tournamentUsersList.indexOf(author) === -1)
+    {
+        var registerCheck = 0;
+        var warning = "";
+        positionProcess = positionProcess.toLowerCase();
+        console.log(positionProcess);
+        // check the position
+        if (positionProcess == "o" || positionProcess == "offense")
+        {
+            positionProcess = "O";
+            registerCheck++;
+        }
+        else if (positionProcess == "o/d" || positionProcess == "offense/defense")
+        {
+            positionProcess = "O/D";
+            registerCheck++;
+        }
+        else if (positionProcess == "b" || positionProcess == "both")
+        {
+            positionProcess = "Both";
+            registerCheck++;
+        }
+        else if (positionProcess == "d/o" || positionProcess == "defense/offense")
+        {
+            positionProcess = "D/O";
+            registerCheck++;
+        }
+        else if (positionProcess == "d" || positionProcess == "defense")
+        {
+            positionProcess = "D";
+            registerCheck++;
+        }
+        else
+        {
+            warning += "\nYour position was not detected. Please use one of the following: O, O/D, Both, D/O, D.";
+        }
+        // check the mic
+        micProcess = micProcess.toLowerCase();
+        console.log(micProcess);
+        if (micProcess == "yes" || micProcess == "y")
+        {
+            micProcess = "Yes";
+            registerCheck++;
+        }
+        else if (micProcess == "no" || micProcess == "n")
+        {
+            micProcess = "No";
+            registerCheck++;
+        }
+        else
+        {
+            warning += "\nYour mic status was not detected. Please use Yes if you have a mic or No if you do not.";
+        }
+        // check the ping
+        console.log(pingProcess);
+        console.log(tagproName);
+        if (isNaN(pingProcess) === false)
+        {
+            pingProcess = Math.floor(pingProcess);
+            if (pingProcess > 0 && pingProcess <= 300)
+            {
+                registerCheck++;
+            }
+            else
+            {
+                warning += "\nYour ping seems to be slightly exaggerated. Please use a number between 1 and 300.";
+            }
+        }
+        else
+        {
+            warning += "\nYour ping was not detected. Please use an integer between 1 and 300.";
+        }
+        if (registerCheck == 3)
+        {
+            userGroups.tournamentUsers[author] = {"tagproName":tagproName, "position":positionProcess, "mic":micProcess, "ping":pingProcess};
+            fs.writeFile(pathToUserGroups, JSON.stringify(userGroups, null, 4), 'utf8');
+            return message.reply("Your information has been added! You can now use the !signup command to sign up for tournaments!");
+            console.log("complete");
+        }
+        else
+        {
+            return message.reply(warning + "\nPlease use the following format: !register [position] [mic] [ping] [tagproName]");
+        }
+    }
+    else
+    {
+        return message.reply("Sorry, your information is already saved! Use !signup to sign up for tournaments!");
+    }
 };
 
 exports.conf = {
-  enabled: true,
-  guildOnly: false,
-  aliases: [],
-  permLevel: "User"
+    enabled: true,
+    guildOnly: false,
+    aliases: [],
+    permLevel: "User"
 };
 
 exports.help = {
-  name: "register",
-  category: "Tournaments",
-  description: "Saves user information to the bot for tournaments! Remember to use !signup to sign up for the tournament!",
-  usage: "register [Position] [Mic] [Ping] [tagproName]"
+    name: "register",
+    category: "Tournaments",
+    description: "Saves user information to the bot for tournaments! Remember to use !signup to sign up for the tournament!",
+    usage: "register [Position] [Mic] [Ping] [tagproName]"
 };
