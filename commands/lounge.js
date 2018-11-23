@@ -1,10 +1,10 @@
 exports.run = async (client, message, args, level) => {
 	if (!args || args.length < 1) return message.reply("\nSorry, you didn't provide enough arguments.\nTry this: !lounge [name]");
 	var loungeName = args.splice(0);
-	loungeName = loungeName.join(" ");
+	loungeName = loungeName.join(" ").match(/[A-z0-9 ]+/g).join("");
 	var author = message.member;
 	var roleToCheck = message.guild.roles.find(role => role.name === "Lounge Admin");
-	if (author.roles.has(roleToCheck.id))
+	if (author.roles.has(roleToCheck.id) || loungeName == "")
 	{
 		message.channel.send("Sorry, you cannot create more than one active lounge at a time.");
 	}
