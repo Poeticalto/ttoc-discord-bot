@@ -1,55 +1,70 @@
-const fs = require("fs");
-const Discord = require('discord.js');
-const client = new Discord.Client();
-var request = require('request');
-const readline = require('readline');
-const {google} = require('googleapis');
+// The MESSAGE event runs anytime a message is received
+// Note that due to the binding of client to every event, every event
+// goes `client, other, args` when this function is run.
 
-const { promisify } = require("util");
-const readdir = promisify(require("fs").readdir);
-const Enmap = require("enmap");
+module.exports = async (client, message) => {
+  // It's good practice to ignore other bots. This also makes your bot ignore itself
+  // and not get into a spam loop (we call that "botception").
+  if (message.author.bot) return;
 
-client.config = require("./config.js"); // config file
-require("./modules/functions.js")(client); // functions file
-client.commands = new Enmap();
-client.aliases = new Enmap();
-client.settings = new Enmap({name: "settings"});
-//client.logger = require("./modules/Logger");
+  // Grab the settings for this server from Enmap.
+  // If there is no guild, get default conf (DMs)
+  const settings = message.settings = client.getSettings(message.guild.id);
+  
+  // Checks if the bot was mentioned, with no message after it, returns the prefix.
+  const prefixMention = new RegExp(`^<@!?${client.user.id}>( |)$`);
+  if (message.content.match(prefixMention)) {
+    return message.reply(`My prefix on this guild is \`${settings.prefix}\``);
+  }
 
-const init = async () => {
+  // Also good practice to ignore any message that does not start with our prefix,
+  // which is set in the configuration file.
+  if (message.content.indexOf(settings.prefix) !== 0) return;
 
-    // Here we load **commands** into memory, as a collection, so they're accessible
-    // here and everywhere else.
-    const cmdFiles = await readdir("./commands/");
-    //client.logger.log(`Loading a total of ${cmdFiles.length} commands.`);
-    cmdFiles.forEach(f => {
-        if (!f.endsWith(".js")) return;
-        const response = client.loadCommand(f);
-        if (response) console.log(response);
-    });
+  // Here we separate our "command" name, and our "arguments" for the command.
+  // e.g. if we have the message "+say Is this the real life?" , we'll get the following:
+  // command = say
+  // args = ["Is", "this", "the", "real", "life?"]
+  const args = message.content.slice(settings.prefix.length).trim().split(/ +/g);
+  const command = args.shift().toLowerCase();
 
-    // Then we load events, which will include our message and ready event.
-    const evtFiles = await readdir("./events/");
-    //client.logger.log(`Loading a total of ${evtFiles.length} events.`);
-    evtFiles.forEach(file => {
-        const eventName = file.split(".")[0];
-        //client.logger.log(`Loading Event: ${eventName}`);
-        const event = require(`./events/${file}`);
-        // Bind the client to any event, before the existing arguments
-        // provided by the discord.js event.
-        // This line is awesome by the way. Just sayin'.
-        client.on(eventName, event.bind(null, client));
-    });
+  // If the member on a guild is invisible or not cached, fetch them.
+  if (message.guild && !message.member) await message.guild.fetchMember(message.author);
 
-    // Generate a cache of client permissions for pretty perm names in commands.
-    client.levelCache = {};
-    for (let i = 0; i < client.config.permLevels.length; i++) {
-        const thisLevel = client.config.permLevels[i];
-        client.levelCache[thisLevel.name] = thisLevel.level;
+  // Get the user or member's permission level from the elevation
+  const level = client.permlevel(message);
+
+  // Check whether the command, or alias, exist in the collections defined
+  // in app.js.
+  const cmd = client.commands.get(command) || client.commands.get(client.aliases.get(command));
+  // using this const varName = thing OR otherthign; is a pretty efficient
+  // and clean way to grab one of 2 values!
+  if (!cmd) return;
+
+  // Some commands may not be useable in DMs. This check prevents those commands from running
+  // and return a friendly error message.
+  if (cmd && !message.guild && cmd.conf.guildOnly)
+    return message.channel.send("This command is unavailable via private message. Please run this command in a guild.");
+
+  if (level < client.levelCache[cmd.conf.permLevel]) {
+    if (settings.systemNotice === "true") {
+      return message.channel.send(`You do not have permission to use this command.
+  Your permission level is ${level} (${client.config.permLevels.find(l => l.level === level).name})
+  This command requires level ${client.levelCache[cmd.conf.permLevel]} (${cmd.conf.permLevel})`);
+    } else {
+      return;
     }
-    // Here we login the client.
-    client.login(client.config.discordToken);
-    // End top-level async/await function.
-};
+  }
 
-init();
+  // To simplify message arguments, the author's level is now put on level (not member so it is supported in DMs)
+  // The "level" command module argument will be deprecated in the future.
+  message.author.permLevel = level;
+  
+  message.flags = [];
+  while (args[0] && args[0][0] === "-") {
+    message.flags.push(args.shift().slice(1));
+  }
+  // If the command exists, **AND** the user has permission, run it.
+ // client.logger.cmd(`[CMD] ${client.config.permLevels.find(l => l.level === level).name} ${message.author.username} (${message.author.id}) ran command ${cmd.help.name}`);
+  cmd.run(client, message, args, level);
+};
