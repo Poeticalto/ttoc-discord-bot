@@ -72,7 +72,6 @@ function deleteChannels(newMember, oldChannelName)
 			{
 				voiceChannelCheck.delete();
 				newMember.guild.channels.find(channel => channel.name === (oldChannelName.replace(/ /g,"_").toLowerCase())).delete();
-				newMember.removeRole(roleToCheck).catch(console.error);
 			}
 		}
 		}, 30*1000);
@@ -94,7 +93,7 @@ function removeRolePermissions(defaultRole, newChannel)
 
 function processRole(abbrProcess, memberEdit, guild)
 {
-	roleToCheck = guild.roles.find(role => role.name === abbrProcess);
+	const roleToCheck = guild.roles.find(role => role.name === abbrProcess);
 	if (memberEdit.roles.has(roleToCheck.id))
 	{
 		memberEdit.removeRole(roleToCheck).catch(console.error);
