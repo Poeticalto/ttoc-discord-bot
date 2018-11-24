@@ -13,6 +13,8 @@ module.exports = (client) => {
         },
         status: 'online'
     });
+	client.on("error", (e) => console.error(e));
+    client.on("warn", (e) => console.warn(e));
 	var resetScrimList = schedule.scheduleJob('0 0 5 * * *', function(){
 		var scrimList = {
 		"MLTP": [],
