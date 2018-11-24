@@ -5,9 +5,9 @@ var scrimList = require(pathToScrimList);
 
 exports.run = async (client, message, args, level) => {
     var leagueList = Object.keys(scrimList);
-    if (leagueList.indexOf(message.channel.parent.name) > -1)
+    var channelName = message.channel.name;
+    if (leagueList.indexOf(message.channel.parent.name) > -1 && channelName.indexOf("general") === -1)
     {
-        var channelName = message.channel.name;
 		var teamName = channelName.split('_').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
 		var teamIndex = scrimList[message.channel.parent.name].indexOf(teamName);
 		if (teamIndex > -1)
