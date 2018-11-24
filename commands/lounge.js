@@ -40,7 +40,8 @@ exports.run = async (client, message, args, level) => {
                     }
                 ],
                 reason: 'Create Lounge'
-            }));
+            }))
+			.then(channel => channel.setTopic("L-"+loungeName));
             message.guild.createChannel(("L-"+loungeName), "voice")
                 .then(channel => channel.setParent(loungeSection))
                 .then(channel => channel.replacePermissionOverwrites({
@@ -99,7 +100,7 @@ exports.conf = {
 
 exports.help = {
     name: "lounge",
-    category: "Lounge",
+    category: "Lounges",
     description: "Allows for players to create their own lounges",
     usage: "lounge [name]"
 };
