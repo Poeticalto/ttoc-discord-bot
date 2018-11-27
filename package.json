@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Poeticalto/ttoc-discord-bot#readme",
   "dependencies": {
+    "axios": "^0.18.0",
     "better-sqlite-pool": "^0.1.2",
     "bufferutil": "^4.0.0",
     "cat-ascii-faces": "^2.0.0",
