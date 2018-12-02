@@ -74,21 +74,12 @@ function deleteChannels(newMember, oldChannelName)
 				newMember.guild.channels.find(channel => channel.name === (oldChannelName.replace(/ /g,"_").toLowerCase())).delete();
 			}
 		}
-		}, 30*1000);
+		}, 60*1000);
 }
 
 function removePermissions(oldMember, oldChannelName)
 {
-	var oldChannelEdit = oldMember.guild.channels.find(channel => channel.name === oldChannelName.replace(/ /g,"_").toLowerCase());
-	oldChannelEdit.permissionOverwrites.get(oldMember.id).delete();
-}
-
-function removeRolePermissions(defaultRole, newChannel)
-{
-	newChannel.overwritePermissions(defaultRole,
-	{
-		"VIEW_CHANNEL": false
-	});
+	oldMember.guild.channels.find(channel => channel.name === oldChannelName.replace(/ /g,"_").toLowerCase()).permissionOverwrites.get(oldMember.id).delete();
 }
 
 function processRole(abbrProcess, memberEdit, guild)
