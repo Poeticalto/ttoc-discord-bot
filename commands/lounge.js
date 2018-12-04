@@ -65,7 +65,15 @@ exports.run = async (client, message, args, level) => {
                     }
                 ],
                 reason: 'Create Lounge'
-            }));
+            }))
+				.then(async function() {
+					const sectionChannels = message.guild.channels.filter(channel => channel.parent !== null && channel.parent.name === "General Lounges" && channel.type === "voice");
+					const sectionChannelsKeys = doubleSort(sectionChannels.map(channel => channel.name), sectionChannels.keyArray());
+					for (var j = 0; j < sectionChannelsKeys.length; j++)
+					{
+						await sectionChannels.find(channel => channel.id === sectionChannelsKeys[j]).setPosition(j);
+					}
+				});
             message.channel.send("L-"+loungeName+" was successfully created in the General Lounges section!");
             setTimeout(function(){
                 var voiceChannelCheck = message.guild.channels.find(channel => channel.name === ("L-"+loungeName));
@@ -90,6 +98,26 @@ exports.run = async (client, message, args, level) => {
         }
     }
 };
+
+function doubleSort(nameArray, sortArray)
+{
+    var done = false;
+    while (!done) {
+        done = true;
+        for (var i = 1; i < nameArray.length; i++) {
+            if (nameArray[i - 1] > nameArray[i]) {
+                done = false;
+                var tmp = nameArray[i-1];
+                var tmpb = sortArray[i-1];
+                nameArray[i-1] = nameArray[i];
+                sortArray[i-1] = sortArray[i];
+                nameArray[i] = tmp;
+                sortArray[i] = tmpb;
+            }
+        }
+    }
+    return sortArray;
+}
 
 exports.conf = {
     enabled: true,
