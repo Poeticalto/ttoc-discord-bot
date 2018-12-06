@@ -105,7 +105,7 @@ function doubleSort(nameArray, sortArray)
     while (!done) {
         done = true;
         for (var i = 1; i < nameArray.length; i++) {
-            if (nameArray[i - 1] > nameArray[i]) {
+            if (nameArray[i - 1].toLowerCase() > nameArray[i].toLowerCase()) {
                 done = false;
                 var tmp = nameArray[i-1];
                 var tmpb = sortArray[i-1];
