@@ -102,8 +102,8 @@ exports.conf = {
 };
 
 exports.help = {
-    name: "register",
+    name: "signup",
     category: "Tournaments",
-    description: "Saves user information to the bot for tournaments! Remember to use !signup to sign up for the tournament!",
-    usage: "register [Position] [Mic] [Ping] [tagproName]"
+    description: "Signs user up for a tournament as a player",
+    usage: "signup"
 };
