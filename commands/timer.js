@@ -77,7 +77,7 @@ exports.conf = {
 
 exports.help = {
     name: "timer",
-    category: "Miscelaneous",
+    category: "Miscellaneous",
     description: "Sets a timer",
     usage: "timer [seconds]"
 };

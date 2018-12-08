@@ -45,7 +45,7 @@ exports.conf = {
 
 exports.help = {
     name: "cat",
-    category: "Miscelaneous",
+    category: "Miscellaneous",
     description: "Sends a cat! ID can be specified for a specific cat.",
     usage: "cat [ID]"
 };

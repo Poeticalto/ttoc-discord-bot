@@ -83,7 +83,7 @@ exports.conf = {
 
 exports.help = {
   name: "react",
-  category: "Miscelaneous",
+  category: "Miscellaneous",
   description: "reacts to the previous message with a string",
   usage: "react [string]"
 };
