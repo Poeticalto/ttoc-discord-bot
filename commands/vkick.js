@@ -25,7 +25,7 @@ exports.conf = {
 
 exports.help = {
     name: "vkick",
-    category: "Miscelaneous",
+    category: "System",
     description: "kicks a player from a voice channel",
     usage: "vkick [@user]"
 };
