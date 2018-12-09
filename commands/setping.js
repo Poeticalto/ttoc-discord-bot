@@ -1,16 +1,14 @@
-const fs = require("fs");
-const path = require('path');
-var pathToUserGroups = path.join(__dirname, '../usergroups.json');
-var userGroups = require(pathToUserGroups);
-
 exports.run = async (client, message, args, level) => {
     if (!args || args.length < 1) return message.reply("\nSorry, you didn't provide enough arguments.\nTry this: !setping [ping]");
     var [pingProcess] = args.splice(0);
-    var author = message.author.tag;
-    var tournamentUsersList = Object.keys(userGroups.tournamentUsers);
-    if (tournamentUsersList.indexOf(author) > -1)
+    let currentUser = client.getTournamentUser.get(message.author.id);
+    if (!currentUser)
     {
-        var registerCheck = 0;
+        return message.reply("Sorry, your information was not found! Please use the !register command to set it!");   
+    }
+    else
+    {
+		var registerCheck = 0;
         var warning = "";
         if (isNaN(pingProcess) === false)
         {
@@ -30,18 +28,14 @@ exports.run = async (client, message, args, level) => {
         }
         if (registerCheck == 1)
         {
-            userGroups.tournamentUsers[author].ping = pingProcess;
-            fs.writeFile(pathToUserGroups, JSON.stringify(userGroups, null, 4), 'utf8');
+            currentUser.ping = pingProcess;
+            client.setTournamentUser.run(currentUser);
             return message.reply("Your ping has been changed to " + pingProcess + "!");
         }
         else
         {
             return message.reply(warning + "\nPlease use the following format: !setping [ping]");
         }
-    }
-    else
-    {
-        return message.reply("Sorry, your information was not found! Please use the !register command to set it!");
     }
 };
 

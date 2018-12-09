@@ -1,20 +1,14 @@
-const fs = require("fs");
-const path = require('path');
-var pathToUserGroups = path.join(__dirname, '../usergroups.json');
-var userGroups = require(pathToUserGroups);
-
 exports.run = async (client, message, args, level) => {
     if (!args || args.length < 4) return message.reply("\nSorry, you didn't provide enough arguments.\nTry this: !register [Position] [Mic] [Ping] [tagproName]");
     var [positionProcess, micProcess, pingProcess, ...tagproName] = args.splice(0);
     tagproName = tagproName.join(" ");
     var author = message.author.tag;
-    var tournamentUsersList = Object.keys(userGroups.tournamentUsers);
-    if (tournamentUsersList.indexOf(author) === -1)
+	let registerPlayer = client.getTournamentUser.get(message.author.id);
+    if (!registerPlayer)
     {
         var registerCheck = 0;
         var warning = "";
         positionProcess = positionProcess.toLowerCase();
-        console.log(positionProcess);
         // check the position
         if (positionProcess == "o" || positionProcess == "offense")
         {
@@ -47,7 +41,6 @@ exports.run = async (client, message, args, level) => {
         }
         // check the mic
         micProcess = micProcess.toLowerCase();
-        console.log(micProcess);
         if (micProcess == "yes" || micProcess == "y")
         {
             micProcess = "Yes";
@@ -63,8 +56,6 @@ exports.run = async (client, message, args, level) => {
             warning += "\nYour mic status was not detected. Please use Yes if you have a mic or No if you do not.";
         }
         // check the ping
-        console.log(pingProcess);
-        console.log(tagproName);
         if (isNaN(pingProcess) === false)
         {
             pingProcess = Math.floor(pingProcess);
@@ -83,10 +74,16 @@ exports.run = async (client, message, args, level) => {
         }
         if (registerCheck == 3)
         {
-            userGroups.tournamentUsers[author] = {"tagproName":tagproName, "position":positionProcess, "mic":micProcess, "ping":pingProcess};
-            fs.writeFile(pathToUserGroups, JSON.stringify(userGroups, null, 4), 'utf8');
+            registerPlayer = {
+				id: message.author.id,
+				tagproname: tagproName,
+				position: positionProcess,
+				mic: micProcess,
+				ping: pingProcess,
+				pstatus: 0
+			};
+			client.setTournamentUser.run(registerPlayer);
             return message.reply("Your information has been added! You can now use the !signup command to sign up for tournaments!");
-            console.log("complete");
         }
         else
         {
