@@ -1,30 +1,26 @@
 const Discord = require('discord.js');
 const fs = require("fs");
 const path = require('path');
-var pathToCatLinks = path.join(__dirname, '../cats.json');
-var cats = require(pathToCatLinks);
+const pathToCatLinks = path.join(__dirname, '../cats.json');
+const cats = require(pathToCatLinks);
 
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
-    var randomCat;
+    let randomCat;
     if (!args || args.length < 1){
         randomCat = Math.floor(Math.random() * Math.floor(Object.keys(cats).length-1));
     }
     else {
-        var [numProcess] = args.splice(0);
-        if (isNaN(numProcess) === false)
-        {
+        let [numProcess] = args.splice(0);
+        if (isNaN(numProcess) === false) {
             numProcess = Math.floor(numProcess);
-            if (numProcess <= Object.keys(cats).length-1 && numProcess >= 0)
-            {
+            if (numProcess <= Object.keys(cats).length-1 && numProcess >= 0) {
                 randomCat = numProcess;
             }
-            else
-            {
+            else {
                 randomCat = Math.floor(Math.random() * Math.floor(Object.keys(cats).length-1));
             }
         }
-        else
-        {
+        else {
             randomCat = Math.floor(Math.random() * Math.floor(Object.keys(cats).length-1));
         }
     }

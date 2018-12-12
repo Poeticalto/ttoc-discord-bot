@@ -1,29 +1,25 @@
 const fs = require("fs");
 const path = require('path');
-var pathToTeamRoles = path.join(__dirname, '../teamRoles.json');
-var teamRoles = require(pathToTeamRoles);
+const pathToTeamRoles = path.join(__dirname, '../teamRoles.json');
+const teamRoles = require(pathToTeamRoles);
 
 exports.run = async (client, message, args, level) => {
     if (!args || args.length < 2) return message.channel.send("\nSorry, you didn't provide enough arguments.\nTry this: !team [abbr] @player");
-    var [abbrProcess] = args.splice(0);
-    var author = message.author.tag;
-    var memberEdit = message.mentions.members.first();
-    var permList = teamRoles.permList;
-    var teamList = teamRoles.teamList;
-    var leagueCheck = abbrProcess.split('')[0].toUpperCase();
-    switch(leagueCheck)
-    {
+    let [abbrProcess] = args.splice(0);
+    ket memberEdit = message.mentions.members.first();
+    const permList = teamRoles.permList;
+    const teamList = teamRoles.teamList;
+    const leagueCheck = abbrProcess.split('')[0].toUpperCase();
+    switch(leagueCheck) {
         case "M":
         case "A":
         case "T":
         case "E":
         case "O":
-            if (teamList[leagueCheck].indexOf(abbrProcess.toUpperCase()) > -1 && message.member.roles.some(r => permList[leagueCheck].includes(r.name)))
-            {
+            if (teamList[leagueCheck].indexOf(abbrProcess.toUpperCase()) > -1 && message.member.roles.some(r => permList[leagueCheck].includes(r.name))) {
                 processRole(abbrProcess.toUpperCase(), memberEdit, message);
             }
-            else
-            {
+            else {
                 return message.channel.send("Sorry, you don't have permission to assign this team name.");
             }
             break;
@@ -47,16 +43,13 @@ exports.help = {
     usage: "team [abbr] @player"
 };
 
-function processRole(abbrProcess, memberEdit, message)
-{
+function processRole(abbrProcess, memberEdit, message) {
     const roleToCheck = message.guild.roles.find(role => role.name === abbrProcess);
-    if (memberEdit.roles.has(roleToCheck.id))
-    {
+    if (memberEdit.roles.has(roleToCheck.id)) {
         memberEdit.removeRole(roleToCheck).catch(console.error);
         message.channel.send(abbrProcess+" role successfully removed!");
     }
-    else
-    {
+    else {
         memberEdit.addRole(roleToCheck).catch(console.error);
         message.channel.send(abbrProcess+" role successfully added!");
     }

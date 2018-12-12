@@ -1,24 +1,19 @@
 exports.run = async (client, message, args) => { // eslint-disable-line no-unused-vars
-    if (!args || args.length < 1) return message.channel.send("\nSorry, you didn't provide enough arguments.\nTry this: !bubble [text]");
-    var array = args.join(" ");
+    if (!args || args.length < 1) return await message.channel.send("\nSorry, you didn't provide enough arguments.\nTry this: !bubble [text]");
+    let array = args.join(" ");
     array = array.split("");
     message.delete();
-    var newMessage = "";
-    for (var i = 0; i < array.length; i++)
-    {
-        var currentLetter = array[i];
-        if (currentLetter.match(/[A-z]/i))
-        {
+    let newMessage = "";
+    for (let i = 0; i < array.length; i++) {
+        let currentLetter = array[i];
+        if (currentLetter.match(/[A-z]/i)) {
             newMessage += ":regional_indicator_" + currentLetter.toLowerCase() + ": ";
         }
-        else if (currentLetter === " ")
-        {
+        else if (currentLetter === " ") {
             newMessage += "   ";
         }
-        else if (currentLetter.match(/[0-9]/i))
-        {
-            switch(currentLetter)
-            {
+        else if (currentLetter.match(/[0-9]/i)) {
+            switch(currentLetter) {
                 case "0":
                     newMessage += ":zero: ";
                     break;
@@ -51,21 +46,18 @@ exports.run = async (client, message, args) => { // eslint-disable-line no-unuse
                     break;
             }
         }
-        else if (currentLetter === "!")
-        {
+        else if (currentLetter === "!") {
             newMessage += ":grey_exclamation: ";
         }
-        else if (currentLetter === "?")
-        {
+        else if (currentLetter === "?") {
             newMessage += ":grey_question: ";
         }
-        else
-        {
+        else {
             newMessage += currentLetter + " ";
         }
     }
     newMessage += "- " + message.author.username;
-    message.channel.send(newMessage);
+    await message.channel.send(newMessage);
 };
 
 exports.conf = {

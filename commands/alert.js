@@ -1,4 +1,4 @@
-exports.run = async (client, message, args, level) => {
+exports.run = (client, message, args, level) => {
     processRole("TToC Alerts", message.member, message);
 };
 
@@ -16,16 +16,13 @@ exports.help = {
     usage: "alert"
 };
 
-function processRole(abbrProcess, memberEdit, message)
-{
+function processRole(abbrProcess, memberEdit, message) {
     const roleToCheck = message.guild.roles.find(role => role.name === abbrProcess);
-    if (memberEdit.roles.has(roleToCheck.id))
-    {
+    if (memberEdit.roles.has(roleToCheck.id)) {
         memberEdit.removeRole(roleToCheck).catch(console.error);
         message.channel.send(abbrProcess+" role successfully removed!");
     }
-    else
-    {
+    else {
         memberEdit.addRole(roleToCheck).catch(console.error);
         message.channel.send(abbrProcess+" role successfully added!");
     }

@@ -1,21 +1,18 @@
 exports.run = async (client, message, args, level) => {
     if (!args || args.length < 1) return message.reply("\nSorry, you didn't provide enough arguments.\nTry this: !lounge [name]");
-    var loungeName = args.splice(0);
+    let loungeName = args.splice(0);
     loungeName = loungeName.join(" ").match(/[A-Za-z0-9 ]+/g).join("");
-    var author = message.member;
-    var roleToCheck = message.guild.roles.find(role => role.name === "Lounge Admin");
-    if (author.roles.has(roleToCheck.id) || loungeName == "")
-    {
+    const author = message.member;
+    const roleToCheck = message.guild.roles.find(role => role.name === "Lounge Admin");
+    if (author.roles.has(roleToCheck.id) || loungeName == "") {
         message.channel.send("Sorry, you cannot create more than one active lounge at a time.");
     }
-    else
-    {
-        var testChannel = message.guild.channels.find(channel => channel.name === ("L-"+loungeName));
-        if (testChannel === null && typeof testChannel === "object")
-        {
-            var loungeSection = message.guild.channels.find(channel => channel.name === "General Lounges");
-            var adminRole = message.guild.roles.find(role => role.name === "Admin");
-            var botRole = message.guild.roles.find(role => role.name === "Bots");
+    else {
+        let testChannel = message.guild.channels.find(channel => channel.name === ("L-"+loungeName));
+        if (testChannel === null && typeof testChannel === "object") {
+            const loungeSection = message.guild.channels.find(channel => channel.name === "General Lounges");
+            const adminRole = message.guild.roles.find(role => role.name === "Admin");
+            const botRole = message.guild.roles.find(role => role.name === "Bots");
             message.member.addRole(roleToCheck).catch(console.error);
             message.guild.createChannel(("l-"+loungeName.replace(/ /g,"_").toLowerCase()), "text")
                 .then(channel => channel.setParent(loungeSection))
@@ -41,7 +38,7 @@ exports.run = async (client, message, args, level) => {
                 ],
                 reason: 'Create Lounge'
             }))
-			.then(channel => channel.setTopic("L-"+loungeName));
+                .then(channel => channel.setTopic("L-"+loungeName));
             message.guild.createChannel(("L-"+loungeName), "voice")
                 .then(channel => channel.setParent(loungeSection))
                 .then(channel => channel.replacePermissionOverwrites({
@@ -66,25 +63,22 @@ exports.run = async (client, message, args, level) => {
                 ],
                 reason: 'Create Lounge'
             }))
-				.then(async function() {
-					const sectionChannels = message.guild.channels.filter(channel => channel.parent !== null && channel.parent.name === "General Lounges" && channel.type === "voice");
-					const sectionChannelsKeys = doubleSort(sectionChannels.map(channel => channel.name), sectionChannels.keyArray());
-					for (var j = 0; j < sectionChannelsKeys.length; j++)
-					{
-						await sectionChannels.find(channel => channel.id === sectionChannelsKeys[j]).setPosition(j);
-					}
-				});
+                .then(async function() {
+                const sectionChannels = message.guild.channels.filter(channel => channel.parent !== null && channel.parent.name === "General Lounges" && channel.type === "voice");
+                const sectionChannelsKeys = doubleSort(sectionChannels.map(channel => channel.name), sectionChannels.keyArray());
+                for (let j = 0; j < sectionChannelsKeys.length; j++)
+                {
+                    await sectionChannels.find(channel => channel.id === sectionChannelsKeys[j]).setPosition(j);
+                }
+            });
             message.channel.send("L-"+loungeName+" was successfully created in the General Lounges section!");
             setTimeout(function(){
-                var voiceChannelCheck = message.guild.channels.find(channel => channel.name === ("L-"+loungeName));
-                if (voiceChannelCheck === null && typeof voiceChannelCheck === "object")
-                {
+                const voiceChannelCheck = message.guild.channels.find(channel => channel.name === ("L-"+loungeName));
+                if (voiceChannelCheck === null && typeof voiceChannelCheck === "object") {
                     //insert code here
                 }
-                else
-                {
-                    if (voiceChannelCheck.members.keyArray().length === 0)
-                    {
+                else {
+                    if (voiceChannelCheck.members.keyArray().length === 0) {
                         voiceChannelCheck.delete();
                         message.guild.channels.find(channel => channel.name === ("l-"+loungeName.replace(/ /g,"_").toLowerCase())).delete();
                         message.member.removeRole(roleToCheck).catch(console.error);
@@ -92,23 +86,21 @@ exports.run = async (client, message, args, level) => {
                 }
             }, 30*1000);
         }
-        else
-        {
+        else {
             message.channel.send("Sorry, a lounge with that name already exists! Try a different name.");
         }
     }
 };
 
-function doubleSort(nameArray, sortArray)
-{
-    var done = false;
+function doubleSort(nameArray, sortArray) {
+    let done = false;
     while (!done) {
         done = true;
-        for (var i = 1; i < nameArray.length; i++) {
+        for (let i = 1; i < nameArray.length; i++) {
             if (nameArray[i - 1].toLowerCase() > nameArray[i].toLowerCase()) {
                 done = false;
-                var tmp = nameArray[i-1];
-                var tmpb = sortArray[i-1];
+                let tmp = nameArray[i-1];
+                let tmpb = sortArray[i-1];
                 nameArray[i-1] = nameArray[i];
                 sortArray[i-1] = sortArray[i];
                 nameArray[i] = tmp;

@@ -1,15 +1,15 @@
 const Discord = require('discord.js');
 const fs = require('fs');
 const path = require('path');
-var pathToScrimList = path.join(__dirname, '../scrimList.json');
-var scrimList = require(pathToScrimList);
+const pathToScrimList = path.join(__dirname, '../scrimList.json');
+let scrimList = require(pathToScrimList);
 
 exports.run = async (client, message, args, level) => {
-    //var mltpList = concatTeams("MLTP", scrimList);
-    //var nltpList = concatTeams("NLTP", scrimList);
-    var nftlList = concatTeams("NFTL", scrimList);
-    //var uscList = concatTeams("USC", scrimList);
-    var playerList = concatTeams("Players", scrimList);	
+    //let mltpList = concatTeams("MLTP", scrimList);
+    //let nltpList = concatTeams("NLTP", scrimList);
+    let nftlList = concatTeams("NFTL", scrimList);
+    //let uscList = concatTeams("USC", scrimList);
+    let playerList = concatTeams("Players", scrimList);	
     const exampleEmbed = new Discord.RichEmbed()
     .setAuthor('Available Players/Teams','', '') 
     .setColor('DARK_GOLD')
@@ -22,22 +22,17 @@ exports.run = async (client, message, args, level) => {
     message.channel.send(exampleEmbed);
 };
 
-function concatTeams(league, scrimList)
-{
-    var concatString = "";
-    for (var i = 0; i < scrimList[league].length; i++)
-    {
-        if (i < (scrimList[league].length -1))
-        {
+function concatTeams(league, scrimList) {
+    let concatString = "";
+    for (let i = 0; i < scrimList[league].length; i++) {
+        if (i < (scrimList[league].length -1)) {
             concatString += scrimList[league][i] + ", ";
         }
-        else
-        {
+        else {
             concatString += scrimList[league][i];
         }
     }
-    if (concatString === "")
-    {
+    if (concatString === "") {
         concatString += "None";
     }
     return concatString;

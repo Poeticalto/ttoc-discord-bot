@@ -9,15 +9,15 @@ exports.run = async (client, message, args, level) => {
     else if (currentUser.pstatus >= 1)
     {// remove signup
         currentUser.pstatus = 0;
-		client.setTournamentUser.run(currentUser);
-		return message.reply("Your signup has been removed!");
+        client.setTournamentUser.run(currentUser);
+        return message.reply("Your signup has been removed!");
     }
-	else
-	{// add signup
-		currentUser.pstatus = 1;
-		client.setTournamentUser.run(currentUser);
-		return message.reply("Your signup has been added!");
-	}
+    else
+    {// add signup
+        currentUser.pstatus = 1;
+        client.setTournamentUser.run(currentUser);
+        return message.reply("Your signup has been added!");
+    }
 };
 
 exports.conf = {

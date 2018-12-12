@@ -1,5 +1,5 @@
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
-   const member = message.mentions.members.first();
+    const member = message.mentions.members.first();
     if (!member) return message.reply('Need to @mention a user/bot to voice kick.');
     if (!member.voiceChannel) return message.reply('That user/bot isn\'t in a voice channel.');
 
@@ -9,10 +9,8 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         {id: member.id,
          deny: ['VIEW_CHANNEL', 'CONNECT', 'SPEAK'] }
     ]);
-	await member.setVoiceChannel(temp_channel);
-	console.log("here");
+    await member.setVoiceChannel(temp_channel);
     await temp_channel.delete();
-	console.log("test");
     message.reply('User successfully kicked!');
 };
 
