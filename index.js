@@ -16,11 +16,11 @@ client.settings = new Enmap({name: "settings"});
 //client.logger = require("./modules/Logger");
 
 const Database = require('better-sqlite3');
-let db = new Database("./data/tournamentusers.db");
+let db = new Database("./data/botdatabase.db");
 
 const init = async () => {
 
-    // connect to tournamentusers database
+    // connect to bot users database
     let stmt = db.prepare(`SELECT name
 		FROM sqlite_master
 		WHERE
@@ -38,7 +38,34 @@ const init = async () => {
 			ping INTEGER,
 			pstatus INTEGER
 			);
-
+			
+			CREATE TABLE duelusers (
+			id TEXT PRIMARY KEY,
+			discordname TEXT,
+			server TEXT,
+			currentelo REAL,
+			highelo REAL,
+			lowelo REAL,
+			win INTEGER,
+			loss INTEGER,
+			tie INTEGER,
+			total INTEGER,
+			winp REAL,
+			gamestatus INTEGER
+			);
+			
+			CREATE TABLE duelgames (
+			id INTEGER PRIMARY KEY,
+			playeroneid TEXT,
+			playeronescore INTEGER,
+			playeronebelo REAL,
+			playeroneaelo REAL,
+			playertwoid TEXT,
+			playertwoscore INTEGER,
+			playertwobelo REAL,
+			playertwoaelo REAL
+			);
+			
 			INSERT INTO tournamentusers (id, tagproname, position, mic, ping, pstatus) VALUES
 			("0ABCDEF", "test", "Both", "Yes", 50, 0)
 			;
@@ -48,7 +75,6 @@ const init = async () => {
 
     client.getTournamentUser = db.prepare("SELECT * FROM tournamentusers WHERE id = ?");
     client.setTournamentUser = db.prepare("INSERT OR REPLACE INTO tournamentusers (id, tagproname, position, mic, ping, pstatus) VALUES (@id, @tagproname, @position, @mic, @ping, @pstatus);");
-
 
     // Here we load **commands** into memory, as a collection, so they're accessible
     // here and everywhere else.
