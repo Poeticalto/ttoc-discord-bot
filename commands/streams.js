@@ -41,7 +41,7 @@ exports.conf = {
 
 exports.help = {
     name: "streams",
-    category: "TagPro",
+    category: "tagpro",
     description: "Gets the updated list of TagPro streams",
     usage: "stream"
 };
