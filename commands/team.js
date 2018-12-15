@@ -6,7 +6,7 @@ const teamRoles = require(pathToTeamRoles);
 exports.run = async (client, message, args, level) => {
     if (!args || args.length < 2) return message.channel.send("\nSorry, you didn't provide enough arguments.\nTry this: !team [abbr] @player");
     let [abbrProcess] = args.splice(0);
-    ket memberEdit = message.mentions.members.first();
+    let memberEdit = message.mentions.members.first();
     const permList = teamRoles.permList;
     const teamList = teamRoles.teamList;
     const leagueCheck = abbrProcess.split('')[0].toUpperCase();
