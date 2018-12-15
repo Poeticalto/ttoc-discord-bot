@@ -35,14 +35,14 @@ module.exports = async (client, oldMember, newMember) => {
 function addPermissions(newMember, newChannelName) {
     let newChannelEdit = newMember.guild.channels.find(channel => channel.name === newChannelName.replace(/ /g,"_").toLowerCase());
     newChannelEdit.overwritePermissions(newMember,
-                                        {
+    {
         "READ_MESSAGES": true
     });
 }
 
 function addRolePermissions(defaultRole, newChannel) {
     newChannel.overwritePermissions(defaultRole,
-                                    {
+    {
         "VIEW_CHANNEL": true
     });
 }
