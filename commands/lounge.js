@@ -38,7 +38,10 @@ exports.run = async (client, message, args, level) => {
                 ],
                 reason: 'Create Lounge'
             }))
-                .then(channel => channel.setTopic("L-"+loungeName));
+                .then(function(channel){
+					channel.setTopic("L-"+loungeName);
+					channel.send("Admin commands:\n!admin [@player/role]   :: adds/removes a player or role as a Lounge admin\n!bypass [@player/role]  :: allow/reset a player/role to bypass a locked lounge\n!lock [@player/role]       :: locks/unlocks a voice lounge").then(message => message.pin());
+				});
             message.guild.createChannel(("L-"+loungeName), "voice")
                 .then(channel => channel.setParent(loungeSection))
                 .then(channel => channel.replacePermissionOverwrites({
