@@ -13,10 +13,15 @@ require("./modules/functions.js")(client); // functions file
 client.commands = new Enmap();
 client.aliases = new Enmap();
 client.settings = new Enmap({name: "settings"});
-//client.logger = require("./modules/Logger");
+client.logger = require("./modules/Logger.js");
 
 const Database = require('better-sqlite3');
 let db = new Database("./data/botdatabase.db");
+
+const moment = require('moment');
+
+const badWords = require('bad-words');
+const badFilter = new badWords();
 
 const init = async () => {
 
@@ -75,11 +80,15 @@ const init = async () => {
 
     client.getTournamentUser = db.prepare("SELECT * FROM tournamentusers WHERE id = ?");
     client.setTournamentUser = db.prepare("INSERT OR REPLACE INTO tournamentusers (id, tagproname, position, mic, ping, pstatus) VALUES (@id, @tagproname, @position, @mic, @ping, @pstatus);");
+	
+	client.getTime = () => {return moment().format()};
+	
+    client.checkProfanity = (stringCheck) => {return badFilter.isProfane(stringCheck)};
 
     // Here we load **commands** into memory, as a collection, so they're accessible
     // here and everywhere else.
     const cmdFiles = await readdir("./commands/");
-    //client.logger.log(`Loading a total of ${cmdFiles.length} commands.`);
+    client.logger.log(`Loading a total of ${cmdFiles.length} commands.`);
     cmdFiles.forEach(f => {
         if (!f.endsWith(".js")) return;
         const response = client.loadCommand(f);
@@ -88,10 +97,10 @@ const init = async () => {
 
     // Then we load events, which will include our message and ready event.
     const evtFiles = await readdir("./events/");
-    //client.logger.log(`Loading a total of ${evtFiles.length} events.`);
+    client.logger.log(`Loading a total of ${evtFiles.length} events.`);
     evtFiles.forEach(file => {
         const eventName = file.split(".")[0];
-        //client.logger.log(`Loading Event: ${eventName}`);
+        client.logger.log(`Loading Event: ${eventName}`);
         const event = require(`./events/${file}`);
         // Bind the client to any event, before the existing arguments
         // provided by the discord.js event.
