@@ -1,4 +1,5 @@
 exports.run = async (client, message, args, level) => {
+	client.logger.log(`(${message.member.id}) ${message.member.displayName} used command rainbow with args ${args}`);
     const roleToCheck = message.guild.roles.find(role => role.name === "Rainbow");
     if (message.member.roles.has(roleToCheck.id)) {
         await message.member.removeRole(roleToCheck).catch(console.error);

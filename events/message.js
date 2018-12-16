@@ -10,7 +10,11 @@ module.exports = async (client, message) => {
     // Grab the settings for this server from Enmap.
     // If there is no guild, get default conf (DMs)
     const settings = message.settings = client.getSettings(message.guild.id);
-
+	
+	// profanity checker for message
+    if (client.checkProfanity(message.cleanContent) === true) {
+		client.logger.log(`(${message.member.id}) ${message.member.displayName} triggered profanity check: ${message.cleanContent}`);
+	}
     // Checks if the bot was mentioned, with no message after it, returns the prefix.
     const prefixMention = new RegExp(`^<@!?${client.user.id}>( |)$`);
     if (message.content.match(prefixMention)) {

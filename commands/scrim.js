@@ -4,6 +4,7 @@ const pathToScrimList = path.join(__dirname, '../scrimList.json');
 let scrimList = require(pathToScrimList);
 
 exports.run = async (client, message, args, level) => {
+	client.logger.log(`(${message.member.id}) ${message.member.displayName} used command scrim with args ${args}`);
     let leagueList = Object.keys(scrimList);
     const channelName = message.channel.name;
     if (leagueList.indexOf(message.channel.parent.name) > -1 && channelName.indexOf("general") === -1) {

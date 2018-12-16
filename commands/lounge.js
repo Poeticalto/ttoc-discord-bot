@@ -1,5 +1,7 @@
 exports.run = async (client, message, args, level) => {
+	client.logger.log(`(${message.member.id}) ${message.member.displayName} used command lounge with args ${args}`);
     if (!args || args.length < 1) return message.reply("\nSorry, you didn't provide enough arguments.\nTry this: !lounge [name]");
+	if (client.checkProfanity(message) === true) return message.reply("\nBad words cannot be used as lounge names. Try using a more appropriate name.");
     let loungeName = args.splice(0);
     loungeName = loungeName.join(" ").match(/[A-Za-z0-9 ]+/g).join("");
     const author = message.member;

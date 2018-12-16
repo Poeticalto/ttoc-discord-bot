@@ -4,6 +4,7 @@ const pathToTeamRoles = path.join(__dirname, '../teamRoles.json');
 const teamRoles = require(pathToTeamRoles);
 
 exports.run = async (client, message, args, level) => {
+	client.logger.log(`(${message.member.id}) ${message.member.displayName} used command league with args ${args}`);
     if (!args || args.length < 1) return message.reply("\nSorry, you didn't provide enough arguments.\nTry this: !league [league]");
     let [abbrProcess] = args.splice(0);
     let author = message.member;

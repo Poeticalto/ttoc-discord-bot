@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const axios = require('axios');
 
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
+	client.logger.log(`(${message.member.id}) ${message.member.displayName} used command streams with args ${args}`);
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + client.config.twitchToken;
     axios.defaults.baseURL = 'https://api.twitch.tv/helix/streams';
     axios.get('?game_id=313418')

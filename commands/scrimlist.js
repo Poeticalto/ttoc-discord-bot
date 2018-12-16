@@ -5,6 +5,7 @@ const pathToScrimList = path.join(__dirname, '../scrimList.json');
 let scrimList = require(pathToScrimList);
 
 exports.run = async (client, message, args, level) => {
+	client.logger.log(`(${message.member.id}) ${message.member.displayName} used command scrimlist with args ${args}`);
     //let mltpList = concatTeams("MLTP", scrimList);
     //let nltpList = concatTeams("NLTP", scrimList);
     let nftlList = concatTeams("NFTL", scrimList);

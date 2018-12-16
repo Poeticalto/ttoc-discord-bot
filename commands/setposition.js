@@ -1,4 +1,5 @@
 exports.run = async (client, message, args, level) => {
+	client.logger.log(`(${message.member.id}) ${message.member.displayName} used command setposition with args ${args}`);
     if (!args || args.length < 1) return message.reply("\nSorry, you didn't provide enough arguments.\nTry this: !register [position]");
     let [positionProcess] = args.splice(0);
     let currentUser = client.getTournamentUser.get(message.author.id);

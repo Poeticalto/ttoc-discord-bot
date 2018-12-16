@@ -1,4 +1,5 @@
 exports.run = async (client, message, args, level) => {
+	client.logger.log(`(${message.member.id}) ${message.member.displayName} used command admin with args ${args}`);
     if (!args || args.length < 1) return await message.channel.send("\nSorry, you didn't provide enough arguments.\nTry this: !admin [@player/@role]");
     if (message.mentions.roles.keyArray().length === 0 && message.mentions.members.keyArray().length === 0) {
         message.channel.send("Sorry, a player or role was not detected.\nTry this: !admin [@player/@role]");

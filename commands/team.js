@@ -4,6 +4,7 @@ const pathToTeamRoles = path.join(__dirname, '../teamRoles.json');
 const teamRoles = require(pathToTeamRoles);
 
 exports.run = async (client, message, args, level) => {
+	client.logger.log(`(${message.member.id}) ${message.member.displayName} used command team with args ${args}`);
     if (!args || args.length < 2) return message.channel.send("\nSorry, you didn't provide enough arguments.\nTry this: !team [abbr] @player");
     let [abbrProcess] = args.splice(0);
     let memberEdit = message.mentions.members.first();

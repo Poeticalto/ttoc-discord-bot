@@ -1,6 +1,7 @@
 const axios = require('axios');
 
 exports.run = async (client, message, args, level) => {
+	client.logger.log(`(${message.member.id}) ${message.member.displayName} used command signup with args ${args}`);
     let currentUser = client.getTournamentUser.get(message.author.id);
     if (!currentUser)
     {// user doesn't exist

@@ -7,6 +7,7 @@ help command, its extended help is shown.
 */
 
 exports.run = (client, message, args, level) => {
+	client.logger.log(`(${message.member.id}) ${message.member.displayName} used command help with args ${args}`);
     // If no specific command is called, show all filtered commands.
     if (!args[0]) {
         // Filter all commands by which are available for the user's level, using the <Collection>.filter() method.

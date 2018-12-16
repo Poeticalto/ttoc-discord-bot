@@ -5,6 +5,7 @@ const pathToCatLinks = path.join(__dirname, '../cats.json');
 const cats = require(pathToCatLinks);
 
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
+	client.logger.log(`(${message.member.id}) ${message.member.displayName} used command cat with args ${args}`);
     let randomCat;
     if (!args || args.length < 1){
         randomCat = Math.floor(Math.random() * Math.floor(Object.keys(cats).length-1));

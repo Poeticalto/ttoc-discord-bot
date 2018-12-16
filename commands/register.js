@@ -1,4 +1,5 @@
 exports.run = async (client, message, args, level) => {
+	client.logger.log(`(${message.member.id}) ${message.member.displayName} used command register with args ${args}`);
     if (!args || args.length < 4) return message.reply("\nSorry, you didn't provide enough arguments.\nTry this: !register [Position] [Mic] [Ping] [tagproName]");
     let [positionProcess, micProcess, pingProcess, ...tagproName] = args.splice(0);
     tagproName = tagproName.join(" ");

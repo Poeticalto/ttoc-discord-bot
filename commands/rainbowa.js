@@ -1,6 +1,7 @@
 let rainbowStatus = {};
 
 exports.run = async (client, message, args, level) => {
+	client.logger.log(`(${message.member.id}) ${message.member.displayName} used command rainbowa with args ${args}`);
     if (!(message.guild.id in rainbowStatus)) {
         rainbowStatus[message.guild.id] = 0;
     }

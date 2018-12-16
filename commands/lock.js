@@ -1,4 +1,5 @@
 exports.run = async (client, message, args, level) => {
+	client.logger.log(`(${message.member.id}) ${message.member.displayName} used command lock with args ${args}`);
     if (message.channel.parent !== null && message.channel.parent.name === "General Lounges" && message.channel.name.split("")[1]==="-") {
         if (message.channel.permissionsFor(message.member).has("MANAGE_MESSAGES", true) === true) {
             const loungeName = message.channel.topic;

@@ -1,4 +1,5 @@
 exports.run = async (client, message, args) => { // eslint-disable-line no-unused-vars
+	client.logger.log(`(${message.member.id}) ${message.member.displayName} used command bubble with args ${args}`);
     if (!args || args.length < 1) return await message.channel.send("\nSorry, you didn't provide enough arguments.\nTry this: !bubble [text]");
     let array = args.join(" ");
     array = array.split("");
