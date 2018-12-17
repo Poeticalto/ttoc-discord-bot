@@ -23,6 +23,8 @@ const moment = require('moment');
 const badWords = require('bad-words');
 const badFilter = new badWords();
 
+const schedule = require('node-schedule');
+
 const init = async () => {
 
     // connect to bot users database
@@ -42,6 +44,17 @@ const init = async () => {
 			mic TEXT,
 			ping INTEGER,
 			pstatus INTEGER
+			);
+			
+			CREATE TABLE lounges (
+			id TEXT PRIMARY KEY,
+			adminid TEXT
+			);
+			
+			CREATE TABLE scrimlist (
+			id TEXT PRIMARY KEY,
+			name TEXT,
+			nametype TEXT
 			);
 			
 			CREATE TABLE duelusers (
@@ -78,11 +91,30 @@ const init = async () => {
         db.exec(sqlInit);
     }
 
-    client.getTournamentUser = db.prepare("SELECT * FROM tournamentusers WHERE id = ?");
+    client.getTournamentUser = db.prepare("SELECT * FROM tournamentusers WHERE id = ?;");
     client.setTournamentUser = db.prepare("INSERT OR REPLACE INTO tournamentusers (id, tagproname, position, mic, ping, pstatus) VALUES (@id, @tagproname, @position, @mic, @ping, @pstatus);");
+	client.logger.log("Tournament user db functions loaded.");
+	
+	client.getLoungeAdmin = db.prepare("SELECT * FROM lounges WHERE id = ?;");
+    client.setLoungeAdmin = db.prepare("INSERT OR REPLACE INTO lounges (id, adminid) VALUES (@id, @adminid);");
+	client.deleteLoungeAdmin = db.prepare("DELETE FROM lounges WHERE id = ?;");
+	client.logger.log("lounge admin db functions loaded.");
+	
+	client.getScrimList = db.prepare("SELECT * FROM scrimlist ORDER BY nametype ASC, name ASC;");
+	client.getScrimPlayer = db.prepare("SELECT * FROM scrimlist WHERE id = ?;");
+	client.setScrimPlayer = db.prepare("INSERT OR REPLACE INTO scrimlist (id, name, nametype) VALUES (@id, @name, @nametype);");
+	client.deleteScrimPlayer = db.prepare("DELETE FROM scrimlist WHERE id = ?;");
+	client.clearScrimlist = db.prepare("DELETE FROM scrimlist;");
+	let resetScrimList = schedule.scheduleJob('0 0 5 * * *', function(){
+		// clear scrim list at 5 AM local time
+		client.clearScrimlist.run();
+		client.logger.log("scrim list db cleared.");
+	});
+	client.logger.log("scrimlist db functions loaded.");
 	
 	client.getTime = () => {return moment().format()};
-	
+	badFilter.addWords(...client.config.addBadWords);
+	badFilter.removeWords(...client.config.removeBadWords);
     client.checkProfanity = (stringCheck) => {return badFilter.isProfane(stringCheck)};
 
     // Here we load **commands** into memory, as a collection, so they're accessible
