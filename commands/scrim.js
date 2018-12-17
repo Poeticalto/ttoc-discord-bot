@@ -67,7 +67,7 @@ function updateScrimList(client, guild) {
 		leagueConcat += "\n" + teamConcat;
 	}
     const scrimChannel = guild.channels.find(channel => channel.name === "looking-for-scrim");
-	scrimChannel.setTopic("Available Players/Teams" + leagueConcat);
+	scrimChannel.setTopic("Available Players/Teams:" + leagueConcat);
 }
 
 exports.conf = {

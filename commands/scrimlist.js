@@ -6,7 +6,7 @@ exports.run = async (client, message, args, level) => {
     .setAuthor('Available Players/Teams','', '') 
     .setColor('DARK_GOLD')
     .setTimestamp();
-	if (!scrimListRaw) {
+	if (scrimListRaw.length === 0) {
 		exampleEmbed.addField("None", "No teams/players available", false);
 	}
 	else {
