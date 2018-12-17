@@ -1,72 +1,73 @@
-const fs = require('fs');
-const path = require('path');
-const pathToScrimList = path.join(__dirname, '../scrimList.json');
-let scrimList = require(pathToScrimList);
-
 exports.run = async (client, message, args, level) => {
 	client.logger.log(`(${message.member.id}) ${message.member.displayName} used command scrim with args ${args}`);
-    let leagueList = Object.keys(scrimList);
+	let scrimCheck;
+    const leagueList = ["MLTP", "NLTP", "NFTL", "ELTP", "OLTP"];
     const channelName = message.channel.name;
     if (leagueList.indexOf(message.channel.parent.name) > -1 && channelName.indexOf("general") === -1) {
         const teamName = channelName.split('_').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
-        const teamIndex = scrimList[message.channel.parent.name].indexOf(teamName);
-        if (teamIndex > -1) {
-            message.channel.send(teamName + " removed from scrim list!");
-            scrimList[message.channel.parent.name].splice(teamIndex, 1);
-            fs.writeFile(pathToScrimList, JSON.stringify(scrimList, null, 4), 'utf8');
-            updateScrimList(scrimList, message.guild);
+		scrimCheck = client.getScrimPlayer.get(message.channel.id);
+        if (!scrimCheck) {
+            scrimCheck = {
+				"id": message.channel.id,
+				"name": teamName,
+				"nametype": message.channel.parent.name
+			};
+            client.setScrimPlayer.run(scrimCheck);
+			await message.channel.send(teamName + " removed from scrim list!");
         }
         else {
-            scrimList[message.channel.parent.name].push(teamName);
-            fs.writeFile(pathToScrimList, JSON.stringify(scrimList, null, 4), 'utf8');
-            message.channel.send(teamName + " added to scrim list!");
-            updateScrimList(scrimList, message.guild);
+            client.deleteScrimPlayer.run(message.channel.id);
+			await message.channel.send(teamName + " removed from scrim list!");
         }
+		updateScrimList(client, message.guild);
     }
     else {
-        checkPlayer(message.author.username, scrimList, message);
-        updateScrimList(scrimList, message.guild);
+        scrimCheck = client.getScrimPlayer.get(message.member.id);
+		if (!scrimCheck) {
+			scrimCheck = {
+				"id": message.member.id,
+				"name": message.member.displayName,
+				"nametype": "Players"
+			};
+			client.setScrimPlayer.run(scrimCheck);
+			await message.channel.send(message.member.displayName + " added to scrim list!");
+		}
+		else {
+			client.deleteScrimPlayer.run(message.member.id);
+			await message.channel.send(message.member.displayName + " removed from scrim list!");
+		}
+        updateScrimList(client, message.guild);
     }
 };
 
-function checkPlayer(username, scrimList, message) {
-    const playerIndex = scrimList["Players"].indexOf(username);
-    if (playerIndex > -1) {
-        scrimList["Players"].splice(playerIndex, 1);
-        fs.writeFile(pathToScrimList, JSON.stringify(scrimList, null, 4), 'utf8');
-        message.channel.send(username + " removed from scrim list!");
-    }
-    else {
-        scrimList["Players"].push(username);
-        fs.writeFile(pathToScrimList, JSON.stringify(scrimList, null, 4), 'utf8');
-        message.channel.send(username + " added to scrim list!");
-    }
-}
-
-function updateScrimList(scrimList, guild) {
+function updateScrimList(client, guild) {
+	const scrimListRaw = client.getScrimList.all();
+	let leagueConcat = "";
+	let scrimList = {};
+	for (x in scrimListRaw)
+	{
+		const currentPlayer = scrimListRaw[x];
+		if (!(currentPlayer.nametype in scrimList)){
+			scrimList[currentPlayer.nametype] = [];
+		};
+		scrimList[currentPlayer.nametype].push(currentPlayer.name);
+	}
+	for (y in scrimList)
+	{
+		const currentLeague = scrimList[y];
+		let teamConcat = y + ": ";
+		for (let i = 0; i < currentLeague.length; i++) {
+			if (i < (currentLeague.length -1)) {
+				teamConcat += currentLeague[i] + ", ";
+			}
+			else {
+				teamConcat += currentLeague[i];
+			}
+		}
+		leagueConcat += "\n" + teamConcat;
+	}
     const scrimChannel = guild.channels.find(channel => channel.name === "looking-for-scrim");
-    //let mltpList = concatTeams("MLTP", scrimList);
-    //let nltpList = concatTeams("NLTP", scrimList);
-    let nftlList = concatTeams("NFTL", scrimList);
-    //let uscList = concatTeams("USC", scrimList);
-    let playerList = concatTeams("Players", scrimList);
-    scrimChannel.setTopic("Available Players/Teams\nNFTL: " + nftlList + "\nPlayers: " + playerList);
-}
-
-function concatTeams(league, scrimList) {
-    let concatString = "";
-    for (let i = 0; i < scrimList[league].length; i++) {
-        if (i < (scrimList[league].length -1)) {
-            concatString += scrimList[league][i] + ", ";
-        }
-        else {
-            concatString += scrimList[league][i];
-        }
-    }
-    if (concatString === "") {
-        concatString += "None";
-    }
-    return concatString;
+	scrimChannel.setTopic("Available Players/Teams" + leagueConcat);
 }
 
 exports.conf = {

@@ -1,43 +1,41 @@
-const Discord = require('discord.js');
-const fs = require('fs');
-const path = require('path');
-const pathToScrimList = path.join(__dirname, '../scrimList.json');
-let scrimList = require(pathToScrimList);
-
+const Discord = require("discord.js");
 exports.run = async (client, message, args, level) => {
 	client.logger.log(`(${message.member.id}) ${message.member.displayName} used command scrimlist with args ${args}`);
-    //let mltpList = concatTeams("MLTP", scrimList);
-    //let nltpList = concatTeams("NLTP", scrimList);
-    let nftlList = concatTeams("NFTL", scrimList);
-    //let uscList = concatTeams("USC", scrimList);
-    let playerList = concatTeams("Players", scrimList);	
-    const exampleEmbed = new Discord.RichEmbed()
+	const scrimListRaw = client.getScrimList.all();
+    let exampleEmbed = new Discord.RichEmbed()
     .setAuthor('Available Players/Teams','', '') 
     .setColor('DARK_GOLD')
-    //.addField('MLTP:', mltpList, false)
-    //.addField('NLTP:', nltpList, false)
-    .addField('NFTL:', nftlList, false)
-    //.addField('USC:', uscList, false)
-    .addField('Players:', playerList, false)
-    .setTimestamp()
+    .setTimestamp();
+	if (!scrimListRaw) {
+		exampleEmbed.addField("None", "No teams/players available", false);
+	}
+	else {
+		let scrimList = {};
+		for (x in scrimListRaw)
+		{
+			const currentPlayer = scrimListRaw[x];
+			if (!(currentPlayer.nametype in scrimList)){
+				scrimList[currentPlayer.nametype] = [];
+			};
+			scrimList[currentPlayer.nametype].push(currentPlayer.name);
+		}
+		for (y in scrimList)
+		{
+			const currentLeague = scrimList[y];
+			let teamConcat = "";
+			for (let i = 0; i < currentLeague.length; i++) {
+				if (i < (currentLeague.length -1)) {
+					teamConcat += currentLeague[i] + ", ";
+				}
+				else {
+					teamConcat += currentLeague[i];
+				}
+			}
+			exampleEmbed.addField(y, teamConcat, false);
+		}
+	}
     message.channel.send(exampleEmbed);
 };
-
-function concatTeams(league, scrimList) {
-    let concatString = "";
-    for (let i = 0; i < scrimList[league].length; i++) {
-        if (i < (scrimList[league].length -1)) {
-            concatString += scrimList[league][i] + ", ";
-        }
-        else {
-            concatString += scrimList[league][i];
-        }
-    }
-    if (concatString === "") {
-        concatString += "None";
-    }
-    return concatString;
-}
 
 exports.conf = {
     enabled: true,
