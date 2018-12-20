@@ -98,6 +98,7 @@ const init = async () => {
 	client.getLoungeAdmin = db.prepare("SELECT * FROM lounges WHERE id = ?;");
     client.setLoungeAdmin = db.prepare("INSERT OR REPLACE INTO lounges (id, adminid) VALUES (@id, @adminid);");
 	client.deleteLoungeAdmin = db.prepare("DELETE FROM lounges WHERE id = ?;");
+	client.checkLoungeAdmin = db.prepare("SELECT * FROM lounges WHERE adminid = ?;");
 	client.logger.log("lounge admin db functions loaded.");
 	
 	client.getScrimList = db.prepare("SELECT * FROM scrimlist ORDER BY nametype ASC, name ASC;");

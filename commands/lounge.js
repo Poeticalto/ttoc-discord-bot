@@ -2,11 +2,13 @@ exports.run = async (client, message, args, level) => {
 	client.logger.log(`(${message.member.id}) ${message.member.displayName} used command lounge with args ${args}`);
     if (!args || args.length < 1) return message.reply("\nSorry, you didn't provide enough arguments.\nTry this: !lounge [name]");
 	if (client.checkProfanity(message) === true) return message.reply("\nBad words cannot be used as lounge names. Try using a more appropriate name.");
-    let loungeName = args.splice(0);
-    loungeName = loungeName.join(" ").match(/[A-Za-z0-9 ]+/g).join("");
+	let loungeName = args.splice(0);
+    loungeName = loungeName.join(" ").match(/[A-Za-z0-9 ]+/g);// clean lounge name
+	if (loungeName === null) return message.reply("\nSorry, your lounge name doesn't work. Try using alphanumeric characters for your lounge name.");
+	loungeName = loungeName.join("");
     const author = message.member;
-    const roleToCheck = message.guild.roles.find(role => role.name === "Lounge Admin");
-    if (author.roles.has(roleToCheck.id) || loungeName == "") {
+	const roleCheck = client.checkLoungeAdmin.get(message.author.id);
+    if (roleCheck !== undefined && level < 2) {// members with level >= 2 are trusted to not abuse lounge ommand
         message.channel.send("Sorry, you cannot create more than one active lounge at a time.");
     }
     else {
@@ -15,7 +17,6 @@ exports.run = async (client, message, args, level) => {
             const loungeSection = message.guild.channels.find(channel => channel.name === "General Lounges");
             const adminRole = message.guild.roles.find(role => role.name === "Admin");
             const botRole = message.guild.roles.find(role => role.name === "Bots");
-            message.member.addRole(roleToCheck).catch(console.error);
             message.guild.createChannel(("l-"+loungeName.replace(/ /g,"_").toLowerCase()), "text")
                 .then(channel => channel.setParent(loungeSection))
                 .then(channel => channel.replacePermissionOverwrites({
@@ -46,28 +47,30 @@ exports.run = async (client, message, args, level) => {
 				});
             message.guild.createChannel(("L-"+loungeName), "voice")
                 .then(channel => channel.setParent(loungeSection))
-                .then(channel => channel.replacePermissionOverwrites({
-                overwrites: [
-                    {
-                        id: message.author.id,
-                        allowed: ['MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS']
-                    },
-                    {
-                        id: message.guild.defaultRole.id,
-                        allowed: ['VIEW_CHANNEL', 'CONNECT', 'SPEAK', 'USE_VAD'],
-                        denied: ['CREATE_INSTANT_INVITE',  'MANAGE_CHANNELS', 'MANAGE_ROLES_OR_PERMISSIONS', 'MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS', 'PRIORITY_SPEAKER']
-                    },
-                    {
-                        id: adminRole.id,
-                        allowed: ['CREATE_INSTANT_INVITE',  'MANAGE_CHANNELS', 'MANAGE_ROLES_OR_PERMISSIONS', 'MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS', 'VIEW_CHANNEL', 'CONNECT', 'SPEAK', 'USE_VAD', 'MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS', 'PRIORITY_SPEAKER']
-                    },
-                    {
-                        id: botRole.id,
-                        allowed: ['CREATE_INSTANT_INVITE',  'MANAGE_CHANNELS', 'MANAGE_ROLES_OR_PERMISSIONS', 'MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS', 'VIEW_CHANNEL', 'CONNECT', 'SPEAK', 'USE_VAD', 'MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS', 'PRIORITY_SPEAKER']
-                    }
-                ],
-                reason: 'Create Lounge'
-            }))
+                .then(function(channel){
+					client.setLoungeAdmin.run({"id": channel.id, "adminid": message.member.id});
+					channel.replacePermissionOverwrites({
+					overwrites: [
+						{
+							id: message.author.id,
+							allowed: ['MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS']
+						},
+						{
+							id: message.guild.defaultRole.id,
+							allowed: ['VIEW_CHANNEL', 'CONNECT', 'SPEAK', 'USE_VAD'],
+							denied: ['CREATE_INSTANT_INVITE',  'MANAGE_CHANNELS', 'MANAGE_ROLES_OR_PERMISSIONS', 'MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS', 'PRIORITY_SPEAKER']
+						},
+						{
+							id: adminRole.id,
+							allowed: ['CREATE_INSTANT_INVITE',  'MANAGE_CHANNELS', 'MANAGE_ROLES_OR_PERMISSIONS', 'MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS', 'VIEW_CHANNEL', 'CONNECT', 'SPEAK', 'USE_VAD', 'MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS', 'PRIORITY_SPEAKER']
+						},
+						{
+							id: botRole.id,
+							allowed: ['CREATE_INSTANT_INVITE',  'MANAGE_CHANNELS', 'MANAGE_ROLES_OR_PERMISSIONS', 'MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS', 'VIEW_CHANNEL', 'CONNECT', 'SPEAK', 'USE_VAD', 'MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS', 'PRIORITY_SPEAKER']
+						}
+					],
+					reason: 'Create Lounge'
+				})})
                 .then(async function() {
                 const sectionChannels = message.guild.channels.filter(channel => channel.parent !== null && channel.parent.name === "General Lounges" && channel.type === "voice");
                 const sectionChannelsKeys = doubleSort(sectionChannels.map(channel => channel.name), sectionChannels.keyArray());
@@ -84,9 +87,9 @@ exports.run = async (client, message, args, level) => {
                 }
                 else {
                     if (voiceChannelCheck.members.keyArray().length === 0) {
+						client.deleteLoungeAdmin.run(voiceChannelCheck.id);
                         voiceChannelCheck.delete();
                         message.guild.channels.find(channel => channel.name === ("l-"+loungeName.replace(/ /g,"_").toLowerCase())).delete();
-                        message.member.removeRole(roleToCheck).catch(console.error);
                     }
                 }
             }, 30*1000);

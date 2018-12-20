@@ -11,9 +11,8 @@ module.exports = async (client, oldMember, newMember) => {
         let oldChannelName = oldChannel.name;
         if (oldChannel.parent.name === "General Lounges") {
             removePermissions(newMember, oldChannelName);
-            processRole("Lounge Admin", newMember, newMember.guild);
             if (oldChannel.members.keyArray().length === 0) {
-                deleteChannels(newMember, oldChannelName);
+                deleteChannels(client, newMember, oldChannelName);
             }
         }
     }
@@ -22,7 +21,7 @@ module.exports = async (client, oldMember, newMember) => {
         if (oldChannel.parent.name === "General Lounges") {
             removePermissions(newMember, checkOldChannelName);
             if (oldChannel.members.keyArray().length === 0) {
-                deleteChannels(newMember, checkOldChannelName);
+                deleteChannels(client, newMember, checkOldChannelName);
             }
         }
         let checkNewChannelName = newChannel.name;
@@ -47,7 +46,7 @@ function addRolePermissions(defaultRole, newChannel) {
     });
 }
 
-function deleteChannels(newMember, oldChannelName) {
+function deleteChannels(client, newMember, oldChannelName) {
     setTimeout(function(){
         let voiceChannelCheck = newMember.guild.channels.find(channel => channel.name === oldChannelName);
         if (voiceChannelCheck === null && typeof voiceChannelCheck === "object") {
@@ -55,6 +54,7 @@ function deleteChannels(newMember, oldChannelName) {
         }
         else {
             if (voiceChannelCheck.members.keyArray().length === 0) {
+				client.deleteLoungeAdmin.run(voiceChannelCheck.id);
                 voiceChannelCheck.delete();
                 newMember.guild.channels.find(channel => channel.name === (oldChannelName.replace(/ /g,"_").toLowerCase())).delete();
             }
@@ -64,11 +64,4 @@ function deleteChannels(newMember, oldChannelName) {
 
 function removePermissions(oldMember, oldChannelName) {
     oldMember.guild.channels.find(channel => channel.name === oldChannelName.replace(/ /g,"_").toLowerCase()).permissionOverwrites.get(oldMember.id).delete();
-}
-
-function processRole(abbrProcess, memberEdit, guild) {
-    const roleToCheck = guild.roles.find(role => role.name === abbrProcess);
-    if (memberEdit.roles.has(roleToCheck.id)) {
-        memberEdit.removeRole(roleToCheck).catch(console.error);
-    }
 }
