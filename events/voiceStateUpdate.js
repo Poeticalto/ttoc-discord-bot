@@ -10,7 +10,7 @@ module.exports = async (client, oldMember, newMember) => {
     else if (typeof newChannel == 'undefined') { // user has disconnected from a voice channel
         let oldChannelName = oldChannel.name;
         if (oldChannel.parent.name === "General Lounges") {
-            removePermissions(newMember, oldChannelName);
+			oldMember.guild.channels.find(channel => channel.name === oldChannelName.replace(/ /g,"_").toLowerCase()).permissionOverwrites.get(newMember.id).delete();
             if (oldChannel.members.keyArray().length === 0) {
                 deleteChannels(client, newMember, oldChannelName);
             }
@@ -19,7 +19,7 @@ module.exports = async (client, oldMember, newMember) => {
     else if (typeof oldChannel !== 'undefined' && typeof newChannel !== 'undefined') { // user has switched voice channels
         let checkOldChannelName = oldChannel.name;
         if (oldChannel.parent.name === "General Lounges") {
-            removePermissions(newMember, checkOldChannelName);
+            oldMember.guild.channels.find(channel => channel.name === oldChannelName.replace(/ /g,"_").toLowerCase()).permissionOverwrites.get(newMember.id).delete();
             if (oldChannel.members.keyArray().length === 0) {
                 deleteChannels(client, newMember, checkOldChannelName);
             }
@@ -39,13 +39,6 @@ function addPermissions(newMember, newChannelName) {
     });
 }
 
-function addRolePermissions(defaultRole, newChannel) {
-    newChannel.overwritePermissions(defaultRole,
-    {
-        "VIEW_CHANNEL": true
-    });
-}
-
 function deleteChannels(client, newMember, oldChannelName) {
     setTimeout(function(){
         let voiceChannelCheck = newMember.guild.channels.find(channel => channel.name === oldChannelName);
@@ -59,9 +52,5 @@ function deleteChannels(client, newMember, oldChannelName) {
                 newMember.guild.channels.find(channel => channel.name === (oldChannelName.replace(/ /g,"_").toLowerCase())).delete();
             }
         }
-    }, 60*1000);
-}
-
-function removePermissions(oldMember, oldChannelName) {
-    oldMember.guild.channels.find(channel => channel.name === oldChannelName.replace(/ /g,"_").toLowerCase()).permissionOverwrites.get(oldMember.id).delete();
+    }, 120*1000);
 }
