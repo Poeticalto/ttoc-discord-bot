@@ -12,7 +12,6 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
     ]);
     await member.setVoiceChannel(temp_channel);
     await temp_channel.delete();
-    message.reply('User successfully kicked!');
 	message.delete();
 };
 
