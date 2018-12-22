@@ -3,29 +3,29 @@ module.exports = async (client, oldMember, newMember) => {
     let newChannel = newMember.voiceChannel;
     if (typeof oldChannel == 'undefined') { // user has connected to a voice channel
         let newChannelName = newChannel.name;
-        if (newChannel.parent.name === "General Lounges") {
+        if (newChannel.parent && newChannel.parent.name === "General Lounges") {
             addPermissions(newMember, newChannelName);
         }
     }
     else if (typeof newChannel == 'undefined') { // user has disconnected from a voice channel
         let oldChannelName = oldChannel.name;
-        if (oldChannel.parent.name === "General Lounges") {
-			oldMember.guild.channels.find(channel => channel.name === oldChannelName.replace(/ /g,"_").toLowerCase()).permissionOverwrites.get(newMember.id).delete();
+        if (oldChannel.parent && oldChannel.parent.name === "General Lounges") {
+			oldMember.guild.channels.find(channel => channel.name === oldChannel.name.replace(/ /g,"_").toLowerCase()).permissionOverwrites.get(newMember.id).delete();
             if (oldChannel.members.keyArray().length === 0) {
                 deleteChannels(client, newMember, oldChannelName);
             }
         }
     }
     else if (typeof oldChannel !== 'undefined' && typeof newChannel !== 'undefined') { // user has switched voice channels
-        let checkOldChannelName = oldChannel.name;
-        if (oldChannel.parent.name === "General Lounges") {
-            oldMember.guild.channels.find(channel => channel.name === oldChannelName.replace(/ /g,"_").toLowerCase()).permissionOverwrites.get(newMember.id).delete();
+        let oldChannelName = oldChannel.name;
+        if (oldChannel.parent && oldChannel.parent.name === "General Lounges") {
+            oldMember.guild.channels.find(channel => channel.name === oldChannel.name.replace(/ /g,"_").toLowerCase()).permissionOverwrites.get(newMember.id).delete();
             if (oldChannel.members.keyArray().length === 0) {
-                deleteChannels(client, newMember, checkOldChannelName);
+                deleteChannels(client, newMember, oldChannelName);
             }
         }
         let checkNewChannelName = newChannel.name;
-        if (newChannel.parent.name === "General Lounges") {
+        if (newChannel.parent && newChannel.parent.name === "General Lounges") {
             addPermissions(newMember, checkNewChannelName);
         }
     }
