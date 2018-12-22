@@ -2,16 +2,18 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
     const member = message.mentions.members.first();
     if (!member) return message.reply('Need to @mention a user/bot to voice kick.');
     if (!member.voiceChannel) return message.reply('That user/bot isn\'t in a voice channel.');
-
     const temp_channel = await message.guild.createChannel(member.id, 'voice', [
         {id: message.guild.id,
-         deny: ['VIEW_CHANNEL', 'CONNECT', 'SPEAK'], },
+         denied: ['VIEW_CHANNEL', 'CONNECT', 'SPEAK'] },
+		{id: client.user.id,
+         allowed: ['VIEW_CHANNEL', 'CONNECT', 'SPEAK'] },
         {id: member.id,
-         deny: ['VIEW_CHANNEL', 'CONNECT', 'SPEAK'] }
+         denied: ['VIEW_CHANNEL', 'CONNECT', 'SPEAK'] }
     ]);
     await member.setVoiceChannel(temp_channel);
     await temp_channel.delete();
     message.reply('User successfully kicked!');
+	message.delete();
 };
 
 exports.conf = {
