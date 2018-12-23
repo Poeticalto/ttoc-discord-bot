@@ -10,7 +10,7 @@ module.exports = (client) => {
 			axios.defaults.headers.common['Authorization'] = 'Bearer ' + client.config.twitchToken;
 			axios.defaults.baseURL = 'https://api.twitch.tv/helix/streams';
 			axios.get('?game_id=313418')
-				.then(function (response) {
+				.then(async function (response) {
 				const exampleEmbed = new Discord.RichEmbed()
 				.setTitle('Here is the current list of TagPro streams on Twitch:')
 				.setDescription('If you don\'t see your stream here, make sure your game is set to TagPro!')
@@ -28,8 +28,28 @@ module.exports = (client) => {
 				else {
 					exampleEmbed.addField('No TagPro streams found :c', 'Try making your own stream!', false);
 				}
-				streamsChannel.fetchMessage(streamsChannel.lastMessageID).then(message => message.delete());
-				streamsChannel.send(exampleEmbed);
+				let oldMessage = await streamsChannel.fetchMessage(streamsChannel.lastMessageID);
+				if (oldMessage.embeds[0].fields.length != exampleEmbed.fields.length) {
+					console.log("change detected");
+					oldMessage.delete();
+					streamsChannel.send(exampleEmbed);
+				}
+				else {
+					let check = 0;
+					for (let i = 0; i < exampleEmbed.fields.length; i++) {
+						if (oldMessage.embeds[0].fields[i].value === exampleEmbed.fields[i].value && oldMessage.embeds[0].fields[i].name === exampleEmbed.fields[i].name) {
+							check++;
+						}
+					}
+					if (check === exampleEmbed.fields.length) {
+						console.log("no change in updateStreams");
+					}
+					else {
+						console.log("change detected");
+						oldMessage.delete();
+						streamsChannel.send(exampleEmbed);
+					}
+				}
 			})
 				.catch(function (error) {
 				console.log(error);
