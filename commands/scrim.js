@@ -4,7 +4,7 @@ exports.run = async (client, message, args, level) => {
     const leagueList = ["MLTP", "NLTP", "NFTL", "ELTP", "OLTP"];
     const channelName = message.channel.name;
     if (leagueList.indexOf(message.channel.parent.name) > -1 && channelName.indexOf("general") === -1) {
-        const teamName = channelName.split('_').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+        const teamName = channelName.split('-').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
 		scrimCheck = client.getScrimPlayer.get(message.channel.id);
         if (!scrimCheck) {
             scrimCheck = {
