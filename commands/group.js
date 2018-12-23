@@ -1,12 +1,12 @@
 const request = require("request");
-const tpServers = ["diameter", "centra", "sphere", "origin", "pi", "radius", "chord", "orbit"];
+const tpServers = ["diameter", "centra", "sphere", "origin", "pi", "radius", "chord", "orbit", "test"];
 const maptestServers = ["maptest", "maptest2", "maptest3"];
 
 exports.run = async (client, message, args, level) => {
     client.logger.log(`(${message.member.id}) ${message.member.displayName} used command group with args ${args}`);
 	let server;
     if (!args || args.length < 1){
-        server = "sphere";
+        server = "test";
     }
     else {
         let [serverProcess] = args.splice(0);
