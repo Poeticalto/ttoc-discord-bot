@@ -17,8 +17,8 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         if (response.data.data[0] !== undefined) {
             for (let i = 0; i < response.data.data.length; i++) {
                 const currentStream = response.data.data[i];
-                const authorLabel = currentStream['user_name']+ ' - '+currentStream["viewer_count"]+' viewers';
-                const streamLabel = '['+currentStream['title']+'](https://twitch.tv/'+currentStream['user_name']+')';
+                const authorLabel = currentStream['user_name']+ ' - '+currentStream['title'];
+				const streamLabel = "https://twitch.tv/"+currentStream['user_name'];
                 exampleEmbed.addField(authorLabel, streamLabel, false);
             }
         }
