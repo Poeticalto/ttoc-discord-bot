@@ -149,7 +149,7 @@ const init = async () => {
     }
     // Here we login the client.
     client.login(client.config.discordToken);
-	setInterval(function(){ client.emit("updateStreams"); }, 60000);
+	//setInterval(function(){ client.emit("updateStreams"); }, 60000);
     // End top-level async/await function.
 };
 
