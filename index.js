@@ -1,8 +1,8 @@
 const fs = require("fs");
-const Discord = require('discord.js');
+const Discord = require("discord.js");
 const client = new Discord.Client();
-const readline = require('readline');
-const {google} = require('googleapis');
+const readline = require("readline");
+const {google} = require("googleapis");
 
 const { promisify } = require("util");
 const readdir = promisify(require("fs").readdir);
@@ -15,15 +15,15 @@ client.aliases = new Enmap();
 client.settings = new Enmap({name: "settings"});
 client.logger = require("./modules/Logger.js");
 
-const Database = require('better-sqlite3');
+const Database = require("better-sqlite3");
 let db = new Database("./data/botdatabase.db");
 
-const moment = require('moment');
+const moment = require("moment");
 
-const badWords = require('bad-words');
+const badWords = require("bad-words");
 const badFilter = new badWords();
 
-const schedule = require('node-schedule');
+const schedule = require("node-schedule");
 
 const init = async () => {
 
@@ -149,7 +149,7 @@ const init = async () => {
     }
     // Here we login the client.
     client.login(client.config.discordToken);
-
+	setInterval(function(){ client.emit("updateStreams"); }, 60000);
     // End top-level async/await function.
 };
 
