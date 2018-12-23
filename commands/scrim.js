@@ -1,7 +1,7 @@
 exports.run = async (client, message, args, level) => {
 	client.logger.log(`(${message.member.id}) ${message.member.displayName} used command scrim with args ${args}`);
 	let scrimCheck;
-    const leagueList = ["MLTP", "NLTP", "NFTL", "ELTP", "OLTP"];
+    const leagueList = client.config.leagueList;
     const channelName = message.channel.name;
     if (leagueList.indexOf(message.channel.parent.name) > -1 && channelName.indexOf("general") === -1) {
         const teamName = channelName.split('-').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
