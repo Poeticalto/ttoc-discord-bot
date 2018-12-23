@@ -60,13 +60,11 @@ typings/
 # next.js build output
 .next
 
-usergroups.json
 token.json
 config.js
 config.json
 credentials.json
 data/
 sandbox.js
-teamRoles.json
 commands/test.js
 cats.json
