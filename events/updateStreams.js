@@ -15,8 +15,6 @@ module.exports = (client) => {
 				.setTitle('Here is the current list of TagPro streams on Twitch:')
 				.setDescription('If you don\'t see your stream here, make sure your game is set to TagPro!')
 				.setColor('DARK_GOLD')
-				.setTimestamp()
-				.setFooter('Stream list retreived:');
 				if (response.data.data[0] !== undefined) {
 					for (let i = 0; i < response.data.data.length; i++) {
 						const currentStream = response.data.data[i];
