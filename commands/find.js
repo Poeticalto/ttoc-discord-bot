@@ -23,7 +23,7 @@ exports.conf = {
 
 exports.help = {
     name: "find",
-    category: "Miscellaneous",
+    category: "Lounges",
     description: "Finds what voice channel a member is in",
     usage: "find [name or mention]"
 };
