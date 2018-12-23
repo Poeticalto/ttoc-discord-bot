@@ -13,7 +13,7 @@ exports.run = async (client, message, args, level) => {
 				"nametype": message.channel.parent.name
 			};
             client.setScrimPlayer.run(scrimCheck);
-			await message.channel.send(teamName + " removed from scrim list!");
+			await message.channel.send(teamName + " added to scrim list!");
         }
         else {
             client.deleteScrimPlayer.run(message.channel.id);
