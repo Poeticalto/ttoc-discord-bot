@@ -29,7 +29,7 @@ module.exports = (client) => {
 					exampleEmbed.addField('No TagPro streams found :c', 'Try making your own stream!', false);
 				}
 				let oldMessage = await streamsChannel.fetchMessage(streamsChannel.lastMessageID);
-				if (oldMessage.embeds[0].fields.length != exampleEmbed.fields.length) {
+				if (oldMessage.embeds.length === 0 || oldMessage.embeds[0].fields.length != exampleEmbed.fields.length) {
 					console.log("change detected");
 					oldMessage.delete();
 					streamsChannel.send(exampleEmbed);
