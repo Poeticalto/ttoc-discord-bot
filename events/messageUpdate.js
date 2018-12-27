@@ -7,6 +7,9 @@ const Discord = require('discord.js');
 module.exports = async function(client, oldMessage, newMessage) {
 	// ignore if message was edited in the trash channel or if a bot wrote the original message
 	if (oldMessage.channel.name === client.config.trashChannel || oldMessage.author.bot) return;
+	// Sometimes, the messageUpdate event will send when the server is
+	// retrieving an image to cache, so ignore if the content is the same
+	if (oldMessage.cleanContent === newMessage.cleanContent) return;
 	// get the trash channel
 	const logs = oldMessage.guild.channels.find(channel => channel.name === client.config.trashChannel);
 	// if the trash channel does not exist, note it
