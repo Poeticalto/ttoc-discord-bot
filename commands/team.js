@@ -5,27 +5,16 @@ exports.run = async (client, message, args, level) => {
     const permList = client.config.permList;
     const teamList = client.config.teamList;
     const leagueCheck = abbrProcess.split('')[0].toUpperCase();
-    switch(leagueCheck) {
-        case "M":
-        case "A":
-        case "T":
-        case "E":
-        case "O":
-            if (teamList[leagueCheck].indexOf(abbrProcess.toUpperCase()) > -1 && (message.member.roles.some(r => permList[leagueCheck].includes(r.name)) || level > 2) && message.mentions.members.keyArray().length > 0) {
-                let resultsArr = message.mentions.members.map((member, index, members) => {return processRole(abbrProcess.toUpperCase(), member, message)});
-				return message.channel.send("Successfully processed:\n"+resultsArr.join("\n"));
-            }
-			else if (message.mentions.members.keyArray().length === 0) {
-				return message.channel.send("Sorry, I couldn't find a mentioned player. Remember to mention each player instead of typing names!");
-			}
-            else {
-                return message.channel.send("Sorry, you don't have permission to assign this team name.");
-            }
-            break;
-        default:
-            return message.channel.send("Sorry, I didn't recognize that team name.");
-            break;
-    }
+	if (teamList[leagueCheck].indexOf(abbrProcess.toUpperCase()) > -1 && (message.member.roles.some(r => permList[leagueCheck].includes(r.name)) || level > 2) && message.mentions.members.keyArray().length > 0) {
+		let resultsArr = message.mentions.members.map((member, index, members) => {return processRole(abbrProcess.toUpperCase(), member, message)});
+		return message.channel.send("Successfully processed:\n"+resultsArr.join("\n"));
+	}
+	else if (message.mentions.members.keyArray().length === 0) {
+		return message.channel.send("Sorry, I couldn't find a mentioned player. Remember to mention each player instead of typing names!");
+	}
+	else {
+		return message.channel.send("Sorry, you don't have permission to assign this team name.");
+	}
 };
 
 exports.conf = {
