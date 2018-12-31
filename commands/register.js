@@ -1,11 +1,19 @@
+// register command adds user to the tournamentusers db
+
 exports.run = async (client, message, args, level) => {
-	client.logger.log(`(${message.member.id}) ${message.member.displayName} used command register with args ${args}`);
+    // return if not enough arguments were provided
     if (!args || args.length < 4) return message.reply("\nSorry, you didn't provide enough arguments.\nTry this: !register [Position] [Mic] [Ping] [tagproName]");
+    // split arguments into corresponding vars
     let [positionProcess, micProcess, pingProcess, ...tagproName] = args.splice(0);
+    // concatenate tagproName
     tagproName = tagproName.join(" ");
-    let registerPlayer = client.getTournamentUser.get(message.author.id);
+    // check if user is already registered in the tournamentusers db
+    let registerPlayer = client.tournaments.getTournamentUser.get(message.author.id);
+    // if user is not defined
     if (!registerPlayer) {
+        // registerCheck defines how many checks have passed
         let registerCheck = 0;
+        // warning concatenates all arguments which failed
         let warning = "";
         positionProcess = positionProcess.toLowerCase();
         // check the position
@@ -58,7 +66,9 @@ exports.run = async (client, message, args, level) => {
         else {
             warning += "\nYour ping was not detected. Please use an integer between 1 and 300.";
         }
+        // if arguments passed all checks, register the user
         if (registerCheck == 3) {
+            // create object to pass into db
             registerPlayer = {
                 id: message.author.id,
                 tagproname: tagproName,
@@ -67,14 +77,17 @@ exports.run = async (client, message, args, level) => {
                 ping: pingProcess,
                 pstatus: 0
             };
-            client.setTournamentUser.run(registerPlayer);
+            // write user information to db
+            client.tournaments.setTournamentUser.run(registerPlayer);
             return message.reply("Your information has been added! You can now use the !signup command to sign up for tournaments!");
         }
         else {
+            // tell user which arguments where incorrect
             return message.reply(warning + "\nPlease use the following format: !register [position] [mic] [ping] [tagproName]");
         }
     }
     else {
+        // tell user their information is already saved
         return message.reply("Sorry, your information is already saved! Use !signup to sign up for tournaments!");
     }
 };

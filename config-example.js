@@ -73,6 +73,7 @@ const config = {
     "leagueList": ["MLTP", "NLTP", "ELTP", "OLTP", "NFTL"],
     // trashChannel is the channel where deleted messages are sent.
     "trashChannel": "name of trash channel",
+    "welcomeChannel": "name of welcome channel",
 
     // PERMISSION LEVEL DEFINITIONS.
 
