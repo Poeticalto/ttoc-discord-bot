@@ -21,7 +21,7 @@ exports.run = async (client, message, args, level) => {
                 "nametype": message.channel.parent.name
             };
             // write team data to db
-            client.scrimList.run(scrimCheck);
+            client.scrimList.setScrimPlayer.run(scrimCheck);
             await message.channel.send(teamName + " added to scrim list!");
         }
         else {
