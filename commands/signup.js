@@ -1,10 +1,6 @@
 // signup command allows a user to sign up for a bot tournament
 
-const axios = require('axios');
-
 exports.run = async (client, message, args, level) => {
-    // log command
-    client.logger.log(`(${message.member.id}) ${message.member.displayName} used command signup with args ${args}`);
     // get user data from the tournamentusers db
     let currentUser = client.tournaments.getTournamentUser.get(message.author.id);
     if (!currentUser) {
@@ -16,6 +12,7 @@ exports.run = async (client, message, args, level) => {
         currentUser.pstatus = 0;
         client.tournaments.setTournamentUser.run(currentUser);
         client.tournaments.updateSignup(client, currentUser, "Remove");
+        processRole(message);
         message.reply("Your signup has been removed!");
     }
     else {
@@ -30,6 +27,7 @@ exports.run = async (client, message, args, level) => {
             currentUser.pstatus = 1;
             client.tournaments.setTournamentUser.run(currentUser);
             client.tournaments.updateSignup(client, currentUser, "Add");
+            processRole(message);
             message.reply("Your signup has been added!");
         }
     }
@@ -39,7 +37,7 @@ exports.conf = {
     enabled: true,
     guildOnly: false,
     aliases: [],
-    permLevel: "Bot Admin"
+    permLevel: "User"
 };
 
 exports.help = {
@@ -48,3 +46,16 @@ exports.help = {
     description: "Signs user up for a tournament as a player",
     usage: "signup"
 };
+
+function processRole(message) {
+     const roleToCheck = message.guild.roles.find(role => role.name === "TToC Players");
+    // check whether to add or remove role
+    if (message.member.roles.has(roleToCheck.id)) {
+        // remove role from member
+        message.member.removeRole(roleToCheck).catch(console.error);
+    }
+    else {
+        // add role to member
+        message.member.addRole(roleToCheck).catch(console.error);
+    }
+}
