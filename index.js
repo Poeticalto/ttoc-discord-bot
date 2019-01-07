@@ -96,6 +96,11 @@ id TEXT PRIMARY KEY,
 status INTEGER
 );
 
+CREATE TABLE teamperms (
+id TEXT PRIMARY KEY,
+teamlist TEXT
+);
+
 INSERT INTO tournamentusers (id, tagproname, position, mic, ping, pstatus) VALUES
 ("0ABCDEF", "test", "Both", "Yes", 50, 0)
 ;
@@ -111,6 +116,7 @@ INSERT INTO botstatus(id, status) VALUES ("tournamentteams", 0);
     client.tournaments = {
         "getTournamentUser": db.prepare("SELECT * FROM tournamentusers WHERE id = ?;"),
         "setTournamentUser": db.prepare("INSERT OR REPLACE INTO tournamentusers (id, tagproname, position, mic, ping, pstatus) VALUES (@id, @tagproname, @position, @mic, @ping, @pstatus);"),
+        "resetSignups": db.prepare("UPDATE tournamentusers SET pstatus = 0;"),
         "updateSignup": function(client, currentUser, type) {
             // build the form submission step by step
             let formSubmitURL = client.config.tournamentFormLink;
@@ -152,7 +158,8 @@ INSERT INTO botstatus(id, status) VALUES ("tournamentteams", 0);
         "getLoungeAdmin": db.prepare("SELECT * FROM lounges WHERE id = ?;"),
         "setLoungeAdmin": db.prepare("INSERT OR REPLACE INTO lounges (id, adminid) VALUES (@id, @adminid);"),
         "deleteLoungeAdmin": db.prepare("DELETE FROM lounges WHERE id = ?;"),
-        "checkLoungeAdmin": db.prepare("SELECT * FROM lounges WHERE adminid = ?;")
+        "checkLoungeAdmin": db.prepare("SELECT * FROM lounges WHERE adminid = ?;"),
+        "clearLoungeAdmin": db.prepare("DELETE FROM lounges;")
     };
     client.logger.log("lounges db functions loaded.");
     
@@ -177,6 +184,11 @@ INSERT INTO botstatus(id, status) VALUES ("tournamentteams", 0);
         "setBotStatus": db.prepare("INSERT OR REPLACE INTO botstatus (id, status) VALUES (@id, @status);")
     };
     client.logger.log("botstatus db functions loaded.");
+    
+    client.teamPerms = {
+        "getTeamPerms": db.prepare("SELECT * FROM teamperms WHERE id = ?;"),
+        "setTeamPerms": db.prepare("INSERT OR REPLACE INTO teamperms (id, teamlist) VALUES (@id, @teamlist);")
+    };
     
     // return a new timestamp
     client.getTime = () => {return moment().format()};

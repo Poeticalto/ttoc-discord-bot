@@ -6,24 +6,24 @@ exports.run = async (client, message, args, level) => {
     }
     else if (currentUser.pstatus === 2)
     {// demote to player
-        processRole(message, "TToC Captain");
+        processRole(message, "TToC Captains");
         currentUser.pstatus = 1;
         client.tournaments.updateSignup(client, currentUser, "Edit");
-        return message.reply("Your signup has been removed!");
+        return message.reply("Your signup has been changed to player!");
     }
     else
     {// add signup
         if (currentUser.pstatus === 1) {
-            processRole(message, "TToC Captain");
+            processRole(message, "TToC Captains");
         }
         else {
-            processRole(message, "TToC Captain");
-            processRole(message, "TToC Player");
+            processRole(message, "TToC Captains");
+            processRole(message, "TToC Players");
         }
         currentUser.pstatus = 2;
         client.tournaments.setTournamentUser.run(currentUser);
         client.tournaments.updateSignup(client, currentUser, "Edit");
-        return message.reply("Your signup has been changed to player!");
+        return message.reply("Your signup has been changed to captain!");
     }
 };
 

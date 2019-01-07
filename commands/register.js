@@ -2,7 +2,7 @@
 
 exports.run = async (client, message, args, level) => {
     // return if not enough arguments were provided
-    if (!args || args.length < 4) return message.reply("\nSorry, you didn't provide enough arguments.\nTry this: !register [Position] [Mic] [Ping] [tagproName]");
+    if (!args || args.length < 4) return message.reply("\nSorry, you didn't provide enough arguments.\nTry this: !register [Position] [Mic] [Ping] [tagproName]\nEx: !register Both Yes 20 TToC_BOT");
     // split arguments into corresponding vars
     let [positionProcess, micProcess, pingProcess, ...tagproName] = args.splice(0);
     // concatenate tagproName
@@ -83,7 +83,7 @@ exports.run = async (client, message, args, level) => {
         }
         else {
             // tell user which arguments where incorrect
-            return message.reply(warning + "\nPlease use the following format: !register [position] [mic] [ping] [tagproName]");
+            return message.reply(warning + "\nPlease use the following format: !register [position] [mic] [ping] [tagproName]\nEx: !register Both Yes 20 TToC_BOT");
         }
     }
     else {
