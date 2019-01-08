@@ -2,19 +2,41 @@
 
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
     // return if no arguments were provided
-    if (!args || args.length < 1) return message.reply("\nSorry, you didn't provide enough arguments.\nTry this: !timer [seconds]");
+    let timerLength;
+    //if (!args || args.length < 1) return message.reply("\nSorry, you didn't provide enough arguments.\nTry this: !timer [seconds]");
     // get the timer length from args
-    let [timerLength] = args.splice(0);
+    if (!args || args.length < 1) {
+        timerLength = 10;
+    }
+    else {
+        timerLength = args[0];
+    }
+    //let [timerLength] = args.splice(0);
     // check if timerLength is an integer
     if (isNaN(timerLength) === false) {
         // round down timerLength to resolve decimals
         timerLength = Math.floor(timerLength);
         // check if timer length is greater than 0 and less then 600 seconds (10 minutes)
+        console.log(timerLength);
         if (timerLength > 0 && timerLength <= (10*60)) {
             // delete command message
             message.delete();
+            let cancel = false;
             // declare start of timer
-            message.channel.send("A timer was started for " + timerLength + " seconds!");
+            message.channel.send("A timer was started for " + timerLength + " seconds!")
+                .then(function() {
+				message.channel.awaitMessages(response => response.author.id === message.author.id && response.cleanContent === "c", {
+					max: 1,
+					time: timerLength * 1000,
+					errors: ['time'],
+                }).then(() => {
+                    cancel = true;
+                }
+                )
+                .catch(() => {
+                    cancel=false;
+                    });
+                });
             // set vars for different timer parts
             let timerPart0;
             let timerPart1;
@@ -28,6 +50,10 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                 timerPart1 = setInterval(displayTime1, 5000);
             }
             async function displayTime0() {
+                if (cancel === true){
+                    clearInterval(timerPart0);
+                    return;
+                }
                 // decrease the timer by 10 seconds
                 timerLength -= 10;
                 // send a message saying how many seconds are left
@@ -41,6 +67,10 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
             async function displayTime1() {
                 // decrease the timer by 5 seconds
+                if (cancel === true){
+                    clearInterval(timerPart1);
+                    return;
+                }
                 timerLength -= 5;
                 // send a message saying how many seconds are left
                 await message.channel.send(timerLength + " seconds left");
@@ -53,6 +83,10 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
             async function displayTime2() {
                 // decrease the timer by 1 second
+                if (cancel === true){
+                    clearInterval(timerPart0);
+                    return;
+                }
                 timerLength -= 1;
                 // send a message saying how many seconds are left
                 await message.channel.send(timerLength + " seconds left");
