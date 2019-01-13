@@ -16,6 +16,7 @@ exports.run = async (client, message, args, level) => {
     loungeName = loungeName.join("");
     // get member from message author
     const author = message.member;
+	const leagueList = client.config.leagueList;
     // check if member has created another active lounge
     const roleCheck = client.lounges.checkLoungeAdmin.get(message.author.id);
     // if member already has an active lounge, then deny
@@ -28,11 +29,21 @@ exports.run = async (client, message, args, level) => {
         // create lounge if it does not exist
         if (testChannel === null && typeof testChannel === "object") {
             // get lounge section to place channels under
-            const loungeSection = message.guild.channels.find(channel => channel.name === "General Lounges");
+			let loungeSection;
+			let sectionName;
+			if (message.channel.parent && message.channel.parent.name === "MLTP" && channelName.indexOf("general") === -1) {
+				loungeSection = message.guild.channels.find(channel => channel.name === "MLTP");
+				sectionName = "MLTP";
+			}
+			else {
+				loungeSection = message.guild.channels.find(channel => channel.name === "General Lounges");
+				sectionName = "General Lounges";
+			}
             // get admin role to add permissions
             const adminRole = message.guild.roles.find(role => role.name === "Admin");
             // get bot role to add permissions
             const botRole = message.guild.roles.find(role => role.name === "Bots");
+			const captainRole = message.guild.roles.find(role => role.name === "MLTP Captain");
             // create the text channel with corresponding permissions
             message.guild.createChannel(("l-"+loungeName.replace(/ /g,"_").toLowerCase()), "text")
                 .then(channel => channel.setParent(loungeSection)) // set the channel in the General Lounges section
@@ -86,6 +97,10 @@ exports.run = async (client, message, args, level) => {
                             id: adminRole.id, // set permissions for admin role
                             allowed: ['CREATE_INSTANT_INVITE',  'MANAGE_CHANNELS', 'MANAGE_ROLES_OR_PERMISSIONS', 'MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS', 'VIEW_CHANNEL', 'CONNECT', 'SPEAK', 'USE_VAD', 'MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS', 'PRIORITY_SPEAKER']
                         },
+						{
+							id: captainRole.id,
+							allowed: ['MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS']
+					    },
                         {
                             id: botRole.id, // set permissions for bot role
                             allowed: ['CREATE_INSTANT_INVITE',  'MANAGE_CHANNELS', 'MANAGE_ROLES_OR_PERMISSIONS', 'MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS', 'VIEW_CHANNEL', 'CONNECT', 'SPEAK', 'USE_VAD', 'MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS', 'PRIORITY_SPEAKER']
@@ -95,14 +110,14 @@ exports.run = async (client, message, args, level) => {
                 })})
                 .then(async function() {
                 // sort voice channels by name
-                const sectionChannels = message.guild.channels.filter(channel => channel.parent !== null && channel.parent.name === "General Lounges" && channel.type === "voice");
+                const sectionChannels = message.guild.channels.filter(channel => channel.parent !== null && channel.parent.name === sectionName && channel.type === "voice");
                 const sectionChannelsKeys = doubleSort(sectionChannels.map(channel => channel.name), sectionChannels.keyArray());
                 for (let j = 0; j < sectionChannelsKeys.length; j++)
                 {
                     await sectionChannels.find(channel => channel.id === sectionChannelsKeys[j]).setPosition(j);
                 }
             });
-            message.channel.send("L-"+loungeName+" was successfully created in the General Lounges section!");
+            message.channel.send("L-"+loungeName+" was successfully created in the "+sectionName+" section!");
             // create a check to delete the channel if it remains empty after thirty seconds
             setTimeout(function(){
                 // redefine the voiceChannel to see if it still exists
