@@ -31,7 +31,7 @@ exports.run = async (client, message, args, level) => {
             // get lounge section to place channels under
 			let loungeSection;
 			let sectionName;
-			if (message.channel.parent && message.channel.parent.name === "MLTP" && channel.name.indexOf("general") === -1) {
+			if (message.channel.parent && message.channel.parent.name === "MLTP" && message.channel.name.indexOf("general") === -1) {
 				loungeSection = message.guild.channels.find(channel => channel.name === "MLTP");
 				sectionName = "MLTP";
 			}
