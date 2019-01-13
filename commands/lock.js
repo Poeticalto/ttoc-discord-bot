@@ -2,7 +2,7 @@
 
 exports.run = async (client, message, args, level) => {
     // check that message was sent in a voice lounge
-    if (message.channel.parent !== null && message.channel.parent.name === "General Lounges" && message.channel.name.split("")[1]==="-") {
+    if (message.channel.parent !== null && (message.channel.parent.name === "General Lounges" || message.channel.parent.name === "MLTP") && message.channel.name.split("")[1]==="-") {
         // check that member is a lounge admin
         if (message.channel.permissionsFor(message.member).has("MANAGE_MESSAGES", true) === true) {
             // get lounge name
