@@ -8,7 +8,7 @@ exports.run = async (client, message, args, level) => {
     // channelName gets the name of the channel
     const channelName = message.channel.name;
     // if channel is inside a league section and it is not a general text channel, then process as team
-    if (leagueList.indexOf(message.channel.parent.name) > -1 && channelName.indexOf("general") === -1) {
+    if (message.channel.parent && leagueList.indexOf(message.channel.parent.name) > -1 && channelName.indexOf("general") === -1) {
         // use proper capitalization to coerce as team name
         const teamName = channelName.split('-').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
         // check if team is on the scrimlist
