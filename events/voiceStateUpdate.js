@@ -19,7 +19,7 @@ module.exports = async (client, oldMember, newMember) => {
         // If user has disconnected from a voice lounge, remove access to the text channel and check if the voice lounge should be deleted
         let oldChannelName = oldChannel.name;
         // check if parent is defined before checking if channel is in General Lounges section
-        if (oldChannel.parent && (oldChannel.parent.name === "General Lounges" || oldChannel.parent.name === "MLTP") {
+        if (oldChannel.parent && (oldChannel.parent.name === "General Lounges" || oldChannel.parent.name === "MLTP")) {
             oldMember.guild.channels.find(channel => channel.name === oldChannel.name.replace(/ /g,"_").toLowerCase()).permissionOverwrites.get(newMember.id).delete();
             if (oldChannel.members.keyArray().length === 0) {
                 deleteChannels(client, newMember, oldChannelName);
