@@ -9,7 +9,7 @@ exports.run = (client, message, args, level) => {
     }
     else {
         // check that channel is a voice lounge
-        if (message.channel.parent !== null && (message.channel.parent.name === "General Lounges" || message.channel.parent.name === "MLTP") && message.channel.name.split("")[1]==="-") {
+        if (message.channel.parent !== null && (message.channel.parent.name === "General Lounges" || message.channel.parent.name === "MLTP" || message.channel.parent.name === "NLTP") && message.channel.name.split("")[1]==="-") {
             // check if the member is a lounge admin
             if (message.channel.permissionsFor(message.member).has("MANAGE_MESSAGES", true) === true) {
                 // get the lounge name

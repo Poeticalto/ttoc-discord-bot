@@ -31,9 +31,9 @@ exports.run = async (client, message, args, level) => {
             // get lounge section to place channels under
 			let loungeSection;
 			let sectionName;
-			if (message.channel.parent && message.channel.parent.name === "MLTP" && message.channel.name.indexOf("general") === -1) {
-				loungeSection = message.guild.channels.find(channel => channel.name === "MLTP");
-				sectionName = "MLTP";
+			if (message.channel.parent && (message.channel.parent.name === "MLTP" || message.channel.parent.name === "NLTP") && message.channel.name.indexOf("general") === -1) {
+				loungeSection = message.channel.parent;
+				sectionName = message.channel.parent.name;
 			}
 			else {
 				loungeSection = message.guild.channels.find(channel => channel.name === "General Lounges");
@@ -44,6 +44,7 @@ exports.run = async (client, message, args, level) => {
             // get bot role to add permissions
             const botRole = message.guild.roles.find(role => role.name === "Bots");
 			const captainRole = message.guild.roles.find(role => role.name === "MLTP Captain");
+            const captainRoleB = message.guild.roles.find(role => role.name === "NLTP Captain");
             // create the text channel with corresponding permissions
             message.guild.createChannel(("l-"+loungeName.replace(/ /g,"_").toLowerCase()), "text")
                 .then(channel => channel.setParent(loungeSection)) // set the channel in the General Lounges section
@@ -99,6 +100,10 @@ exports.run = async (client, message, args, level) => {
                         },
 						{
 							id: captainRole.id,
+							allowed: ['MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS']
+					    },
+                        {
+							id: captainRoleB.id,
 							allowed: ['MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS']
 					    },
                         {
