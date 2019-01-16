@@ -7,7 +7,6 @@ exports.run = async (client, message, args, level) => {
     // get the team role to assign
     let [abbrProcess] = args.splice(0);
     abbrProcess = abbrProcess.replace(/\+/g," ");
-    console.log(abbrProcess);
     let memberData = client.teamPerms.getTeamPerms.get(message.member.id);
     if (!memberData && level <= 2) {
         return message.channel.send("Sorry, you don't have permission to assign this team name.");
