@@ -14,6 +14,9 @@ exports.run = async (client, message, args, level) => {
     // return if the cleaned name is empty
     if (loungeName === null) return message.reply("\nSorry, your lounge name doesn't work. Try using alphanumeric characters for your lounge name.");
     loungeName = loungeName.join("");
+    if (loungeName.length > 30) {
+        loungeName = loungeName.substring(0,30);
+    }
     // get member from message author
     const author = message.member;
 	const leagueList = client.config.leagueList;
@@ -31,20 +34,21 @@ exports.run = async (client, message, args, level) => {
             // get lounge section to place channels under
 			let loungeSection;
 			let sectionName;
-			if (message.channel.parent && (message.channel.parent.name === "MLTP" || message.channel.parent.name === "NLTP") && message.channel.name.indexOf("general") === -1) {
+            let captainRole;
+			if (message.channel.parent && client.config.customLoungeSections.indexOf(message.channel.parent.name) > -1 && message.channel.name.indexOf("general") === -1) {
 				loungeSection = message.channel.parent;
 				sectionName = message.channel.parent.name;
+                captainRole = message.guild.roles.find(role => role.name === sectionName+" Captain");
 			}
 			else {
 				loungeSection = message.guild.channels.find(channel => channel.name === "General Lounges");
 				sectionName = "General Lounges";
+                captainRole = message.guild.roles.find(role => role.name === "Moderator");
 			}
             // get admin role to add permissions
             const adminRole = message.guild.roles.find(role => role.name === "Admin");
             // get bot role to add permissions
             const botRole = message.guild.roles.find(role => role.name === "Bots");
-			const captainRole = message.guild.roles.find(role => role.name === "MLTP Captain");
-            const captainRoleB = message.guild.roles.find(role => role.name === "NLTP Captain");
             // create the text channel with corresponding permissions
             message.guild.createChannel(("l-"+loungeName.replace(/ /g,"_").toLowerCase()), "text")
                 .then(channel => channel.setParent(loungeSection)) // set the channel in the General Lounges section
@@ -56,8 +60,8 @@ exports.run = async (client, message, args, level) => {
                     },
                     {
                         id: message.guild.defaultRole.id, // default role is the @everyone role
-                        allowed: ['SEND_MESSAGES', 'USE_EXTERNAL_EMOJIS', 'ADD_REACTIONS', 'READ_MESSAGE_HISTORY'],
-                        denied: ['CREATE_INSTANT_INVITE', 'READ_MESSAGES', 'SEND_TTS_MESSAGES', 'MANAGE_MESSAGES', 'EMBED_LINKS', 'ATTACH_FILES', 'MENTION_EVERYONE', 'MANAGE_CHANNELS', 'MANAGE_ROLES_OR_PERMISSIONS']
+                        allowed: ['SEND_MESSAGES', 'USE_EXTERNAL_EMOJIS', 'ADD_REACTIONS', 'READ_MESSAGE_HISTORY', 'EMBED_LINKS', 'ATTACH_FILES'],
+                        denied: ['CREATE_INSTANT_INVITE', 'READ_MESSAGES', 'SEND_TTS_MESSAGES', 'MANAGE_MESSAGES', 'MENTION_EVERYONE', 'MANAGE_CHANNELS', 'MANAGE_ROLES_OR_PERMISSIONS']
                     },
                     {
                         id: adminRole.id, // set permissions for the admin role
@@ -87,7 +91,7 @@ exports.run = async (client, message, args, level) => {
                     overwrites: [
                         {
                             id: message.author.id, // set author as lounge admin
-                            allowed: ['MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS']
+                            allowed: ['MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS', 'CONNECT']
                         },
                         {
                             id: message.guild.defaultRole.id, // set permissions for @everyone role
@@ -100,10 +104,6 @@ exports.run = async (client, message, args, level) => {
                         },
 						{
 							id: captainRole.id,
-							allowed: ['MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS']
-					    },
-                        {
-							id: captainRoleB.id,
 							allowed: ['MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS']
 					    },
                         {
