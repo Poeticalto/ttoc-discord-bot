@@ -10,7 +10,7 @@ module.exports = async (client, oldMember, newMember) => {
         // If user is in a voice lounge, give access to the corresponding text channel
         let newChannelName = newChannel.name;
         // check if parent is defined before checking if channel is in General Lounges section
-        if (newChannel.parent && (newChannel.parent.name === "General Lounges"  || newChannel.parent.name === "MLTP" || newChannel.parent.name === "NLTP")) {
+        if (newChannel.parent && (newChannel.parent.name === "General Lounges"  || client.config.customLoungeSections.indexOf(newChannel.parent.name) > -1)) {
             // add read permission to text channel
             newMember.guild.channels.find(channel => channel.name === newChannel.name.replace(/ /g,"_").toLowerCase()).overwritePermissions(newMember, {
                 "READ_MESSAGES": true
@@ -21,7 +21,7 @@ module.exports = async (client, oldMember, newMember) => {
         // If user has disconnected from a voice lounge, remove access to the text channel and check if the voice lounge should be deleted
         let oldChannelName = oldChannel.name;
         // check if parent is defined before checking if channel is in General Lounges section
-        if (oldChannel.parent && (oldChannel.parent.name === "General Lounges" || oldChannel.parent.name === "MLTP" || oldChannel.parent.name === "NLTP")) {
+        if (oldChannel.parent && (oldChannel.parent.name === "General Lounges" || client.config.customLoungeSections.indexOf(oldChannel.parent.name) > -1)) {
             oldMember.guild.channels.find(channel => channel.name === oldChannel.name.replace(/ /g,"_").toLowerCase()).overwritePermissions(newMember, {
                 "READ_MESSAGES": false
             });
@@ -33,7 +33,7 @@ module.exports = async (client, oldMember, newMember) => {
     else if (typeof oldChannel !== 'undefined' && typeof newChannel !== 'undefined') { // user has switched voice channels
         // do both checks for connecting and disconnecting
         let oldChannelName = oldChannel.name;
-        if (oldChannel.parent && (oldChannel.parent.name === "General Lounges" || oldChannel.parent.name === "MLTP" || oldChannel.parent.name === "NLTP")) {
+        if (oldChannel.parent && (oldChannel.parent.name === "General Lounges" || client.config.customLoungeSections.indexOf(oldChannel.parent.name) > -1)) {
             oldMember.guild.channels.find(channel => channel.name === oldChannel.name.replace(/ /g,"_").toLowerCase()).overwritePermissions(newMember, {
                 "READ_MESSAGES": false
             });
@@ -41,7 +41,7 @@ module.exports = async (client, oldMember, newMember) => {
                 deleteChannels(client, newMember, oldChannelName);
             }
         }
-        if (newChannel.parent && (newChannel.parent.name === "General Lounges" || newChannel.parent.name === "MLTP" || newChannel.parent.name === "NLTP")) {
+        if (newChannel.parent && (newChannel.parent.name === "General Lounges" || client.config.customLoungeSections.indexOf(oldChannel.parent.name) > -1)) {
             newMember.guild.channels.find(channel => channel.name === newChannel.name.replace(/ /g,"_").toLowerCase()).overwritePermissions(newMember, {
                 "READ_MESSAGES": true
             });
