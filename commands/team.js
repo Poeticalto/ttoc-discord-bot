@@ -6,6 +6,8 @@ exports.run = async (client, message, args, level) => {
     if (!args || args.length < 2) return message.channel.send("\nSorry, you didn't provide enough arguments.\nTry this: !team [abbr] @player");
     // get the team role to assign
     let [abbrProcess] = args.splice(0);
+    abbrProcess = abbrProcess.replace(/\+/g," ");
+    console.log(abbrProcess);
     let memberData = client.teamPerms.getTeamPerms.get(message.member.id);
     if (!memberData && level <= 2) {
         return message.channel.send("Sorry, you don't have permission to assign this team name.");
@@ -16,7 +18,7 @@ exports.run = async (client, message, args, level) => {
             teamArr = memberData.teamlist.split(" ");
         }
         if ((teamArr.indexOf(abbrProcess.toUpperCase()) > -1 || level > 2) && message.mentions.members.keyArray().length > 0) {
-            let resultsArr = message.mentions.members.map((member, index, members) => {return processRole(abbrProcess.toUpperCase(), member, message)});
+            let resultsArr = message.mentions.members.map((member, index, members) => {return processRole(abbrProcess, member, message)});
             return message.channel.send("Successfully processed:\n"+resultsArr.join("\n"));
         }
         else if (message.mentions.members.keyArray().length === 0) {
@@ -45,16 +47,24 @@ exports.help = {
 };
 
 function processRole(abbrProcess, memberEdit, message) {
+    if (abbrProcess.length === 4) {
+        abbrProcess = abbrProcess.toUpperCase();
+    }
     // get the team role
     const roleToCheck = message.guild.roles.find(role => role.name === abbrProcess);
     // remove role if member has role
-    if (memberEdit.roles.has(roleToCheck.id)) {
+    if (roleToCheck !== null && memberEdit.roles.has(roleToCheck.id)) {
         memberEdit.removeRole(roleToCheck).catch(console.error);
         return `removed ${abbrProcess} role for ${memberEdit.displayName}`;
     }
     else {
-        // add role if member doesn't have role
-        memberEdit.addRole(roleToCheck).catch(console.error);
-        return `added ${abbrProcess} role for ${memberEdit.displayName}`;
+        if (roleToCheck !== null) {
+            // add role if member doesn't have role
+            memberEdit.addRole(roleToCheck).catch(console.error);
+            return `added ${abbrProcess} role for ${memberEdit.displayName}`;
+        }
+        else {
+            return `${abbrProcess} role doesn't exist!`;
+        }
     }
 }
