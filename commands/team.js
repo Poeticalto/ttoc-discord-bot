@@ -49,6 +49,7 @@ exports.help = {
 function processRole(abbrProcess, memberEdit, message) {
     // get the team role
     const roleToCheck = message.guild.roles.find(role => role.name.toLowerCase() === abbrProcess);
+    abbrProcess = roleToCheck.name;
     // remove role if member has role
     if (roleToCheck !== null && memberEdit.roles.has(roleToCheck.id)) {
         memberEdit.removeRole(roleToCheck).catch(console.error);
