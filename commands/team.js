@@ -18,7 +18,7 @@ exports.run = async (client, message, args, level) => {
             teamArr = memberData.teamlist.split(" ");
         }
         if ((teamArr.indexOf(abbrProcess.toUpperCase()) > -1 || level > 2) && message.mentions.members.keyArray().length > 0) {
-            let resultsArr = message.mentions.members.map((member, index, members) => {return processRole(abbrProcess, member, message)});
+            let resultsArr = message.mentions.members.map((member, index, members) => {return processRole(abbrProcess.toLowerCase(), member, message)});
             return message.channel.send("Successfully processed:\n"+resultsArr.join("\n"));
         }
         else if (message.mentions.members.keyArray().length === 0) {
@@ -47,11 +47,8 @@ exports.help = {
 };
 
 function processRole(abbrProcess, memberEdit, message) {
-    if (abbrProcess.length === 4) {
-        abbrProcess = abbrProcess.toUpperCase();
-    }
     // get the team role
-    const roleToCheck = message.guild.roles.find(role => role.name === abbrProcess);
+    const roleToCheck = message.guild.roles.find(role => role.name.toLowerCase() === abbrProcess);
     // remove role if member has role
     if (roleToCheck !== null && memberEdit.roles.has(roleToCheck.id)) {
         memberEdit.removeRole(roleToCheck).catch(console.error);
