@@ -59,6 +59,11 @@ This command requires level ${client.levelCache[cmd.conf.permLevel]} (${cmd.conf
             return;
         }
     }
+    
+    // Check if the user is on the blacklist
+    let blacklistCheck = client.blacklist.getUser.get(message.author.id);
+    // If user is on the blacklist, return
+    if (blacklistCheck) return;
 
     // To simplify message arguments, the author's level is now put on level (not member so it is supported in DMs)
     // The "level" command module argument will be deprecated in the future.

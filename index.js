@@ -1,8 +1,8 @@
 const fs = require("fs");
 const Discord = require("discord.js");
 const client = new Discord.Client();
-const readline = require("readline");
-const {google} = require("googleapis");
+//const readline = require("readline");
+//const {google} = require("googleapis");
 
 const { promisify } = require("util");
 const readdir = promisify(require("fs").readdir);
@@ -101,6 +101,10 @@ id TEXT PRIMARY KEY,
 teamlist TEXT
 );
 
+CREATE TABLE blacklist (
+id TEXT PRIMARY KEY
+);
+
 INSERT INTO tournamentusers (id, tagproname, position, mic, ping, pstatus) VALUES
 ("0ABCDEF", "test", "Both", "Yes", 50, 0)
 ;
@@ -189,6 +193,14 @@ INSERT INTO botstatus(id, status) VALUES ("tournamentteams", 0);
         "getTeamPerms": db.prepare("SELECT * FROM teamperms WHERE id = ?;"),
         "setTeamPerms": db.prepare("INSERT OR REPLACE INTO teamperms (id, teamlist) VALUES (@id, @teamlist);")
     };
+    client.logger.log("teamperms db functions loaded.");
+    
+    client.blacklist = {
+        "getUser": db.prepare("SELECT * FROM blacklist WHERE id = ?;"),
+        "setUser": db.prepare("INSERT OR REPLACE INTO blacklist (id) VALUES (@id);"),
+        "deleteUser": db.prepare("DELETE FROM blacklist WHERE id = ?;")
+    };
+    client.logger.log("blacklist db functions loaded.");
     
     // return a new timestamp
     client.getTime = () => {return moment().format()};
