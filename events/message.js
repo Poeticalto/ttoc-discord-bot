@@ -6,14 +6,23 @@ module.exports = async (client, message) => {
     // It's good practice to ignore other bots. This also makes your bot ignore itself
     // and not get into a spam loop (we call that "botception").
     if (message.author.bot) return;
-
     // Grab the settings for this server from Enmap.
     // If there is no guild, get default conf (DMs)
-    const settings = message.settings = client.getSettings(message.guild.id);
-
+    let settings;
+    if (message.guild) {
+        settings = message.settings = client.getSettings(message.guild.id);
+    }
+    else {
+        settings = message.settings = client.config.defaultSettings;
+    }
     // profanity checker for message
     if (client.checkProfanity(message.cleanContent) === true) {
-        client.logger.log(`(${message.member.id}) ${message.member.displayName} triggered profanity check: ${message.cleanContent}`);
+        if (message.member) {
+            client.logger.log(`(${message.author.id}) ${message.member.displayName} triggered profanity check: ${message.cleanContent}`);
+        }
+        else {
+            client.logger.log(`(${message.author.id}) ${message.author.username} triggered profanity check: ${message.cleanContent}`);
+        }
     }
     // Checks if the bot was mentioned, with no message after it, returns the prefix.
     const prefixMention = new RegExp(`^<@!?${client.user.id}>( |)$`);
