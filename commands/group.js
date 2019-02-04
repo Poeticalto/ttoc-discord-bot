@@ -1,7 +1,7 @@
 // group command returns a tagpro group on a specified server.
 
 const request = require("request");
-const tpServers = ["diameter", "centra", "sphere", "origin", "pi", "radius", "chord", "orbit", "test"];
+const tpServers = ["test"];
 const maptestServers = ["maptest", "maptest2", "maptest3"];
 
 exports.run = async (client, message, args, level) => {
