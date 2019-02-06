@@ -2,7 +2,6 @@
 // This event is similar to the !streams command
 
 const Discord = require('discord.js');
-const axios = require('axios');
 
 module.exports = (client) => {
     // find the guild to display stream list in
@@ -13,11 +12,8 @@ module.exports = (client) => {
         const streamsChannel = guild.channels.find(channel => channel.name === "tagpro-streams");
         // check that streamChannel is defined
         if (streamsChannel) {
-            // set axios headers
-            axios.defaults.headers.common['Authorization'] = 'Bearer ' + client.config.twitchToken;
-            axios.defaults.baseURL = 'https://api.twitch.tv/helix/streams';
             // make axios request
-            axios.get('?game_id=313418')
+            client.getStreams.get('?game_id=313418')
                 .then(async function (response) {
                 // create rich embed to send to channel
                 const exampleEmbed = new Discord.RichEmbed()

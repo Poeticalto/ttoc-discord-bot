@@ -1,15 +1,11 @@
 // streams command returns an embed with all active streams for a specific game
 
 const Discord = require('discord.js');
-const axios = require('axios');
 
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
-    // set up axios request
-    axios.defaults.headers.common['Authorization'] = 'Bearer ' + client.config.twitchToken;
-    axios.defaults.baseURL = 'https://api.twitch.tv/helix/streams';
     // get axios request for TagPro (see Twitch APIs if you
     // need to get the id for a different game)
-    axios.get('?game_id=313418')
+    client.getStreams.get('?game_id=313418')
         .then(function (response) {
         // delete the command message
         message.delete().catch(console.error);

@@ -1,8 +1,7 @@
 const fs = require("fs");
 const Discord = require("discord.js");
 const client = new Discord.Client();
-//const readline = require("readline");
-//const {google} = require("googleapis");
+const {google} = require("googleapis");
 
 const { promisify } = require("util");
 const readdir = promisify(require("fs").readdir);
@@ -205,6 +204,20 @@ INSERT INTO botstatus(id, status) VALUES ("tournamentteams", 0);
     // return a new timestamp
     client.getTime = () => {return moment().format()};
     // add bad words in the config to the bad words list
+    client.newUUID = () => {
+        var dt = new Date().getTime();
+        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = (dt + Math.random()*16)%16 | 0;
+            dt = Math.floor(dt/16);
+            return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+        });
+        return uuid;
+    };
+    client.getStreams = axios.create({
+      baseURL: 'https://api.twitch.tv/helix/streams',
+      timeout: 1000,
+      headers: {'Client-ID': client.config.twitchToken}
+    });
     badFilter.addWords(...client.config.addBadWords);
     // remove bad words in the config from the bad words list
     badFilter.removeWords(...client.config.removeBadWords);
