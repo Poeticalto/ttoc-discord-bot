@@ -13,7 +13,7 @@ exports.run = async (client, message, args, level) => {
     loungeName = loungeName.join(" ").match(/[A-Za-z0-9 ]+/g);
     // return if the cleaned name is empty
     if (loungeName === null) return message.reply("\nSorry, your lounge name doesn't work. Try using alphanumeric characters for your lounge name.");
-    loungeName = loungeName.join("");
+    loungeName = loungeName.join("").trim();
     if (loungeName.length > 30) {
         loungeName = loungeName.substring(0,30);
     }
