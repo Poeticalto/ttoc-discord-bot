@@ -215,7 +215,7 @@ INSERT INTO botstatus(id, status) VALUES ("tournamentteams", 0);
     
     client.maps = {
         "getMap": db.prepare("SELECT * FROM maps WHERE lowerid = ?;"),
-        "setMap": db.prepare("INSERT OR REPLACE INTO maps (lowerid, standardid, author, image) VALUE (@lowerid, @standardid, @author, @image);")
+        "setMap": db.prepare("INSERT OR REPLACE INTO maps (lowerid, standardid, author, image) VALUES (@lowerid, @standardid, @author, @image);")
     };
     
     // return a new timestamp
