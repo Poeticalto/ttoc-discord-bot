@@ -95,9 +95,21 @@ id TEXT PRIMARY KEY,
 status INTEGER
 );
 
+CREATE TABLE bottext (
+id TEXT PRIMARY KEY,
+status TEXT
+);
+
 CREATE TABLE teamperms (
 id TEXT PRIMARY KEY,
 teamlist TEXT
+);
+
+CREATE TABLE maps (
+lowerid TEXT PRIMARY KEY,
+standardid TEXT,
+author TEXT,
+image TEXT
 );
 
 CREATE TABLE blacklist (
@@ -200,6 +212,11 @@ INSERT INTO botstatus(id, status) VALUES ("tournamentteams", 0);
         "deleteUser": db.prepare("DELETE FROM blacklist WHERE id = ?;")
     };
     client.logger.log("blacklist db functions loaded.");
+    
+    client.maps = {
+        "getMap": db.prepare("SELECT * FROM maps WHERE lowerid = ?;"),
+        "setMap": db.prepare("INSERT OR REPLACE INTO maps (lowerid, standardid, author, image) VALUE (@lowerid, @standardid, @author, @image);")
+    };
     
     // return a new timestamp
     client.getTime = () => {return moment().format()};
