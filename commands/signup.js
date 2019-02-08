@@ -7,13 +7,15 @@ exports.run = async (client, message, args, level) => {
         // return if user doesn't exist in the db
         return message.reply("Sorry, your information isn't currently saved! Use !register to add your information!");
     }
-    else if (currentUser.pstatus >= 1) {
+    else if (currentUser.pstatus === 1 || currentUser.pstatus === 100) {
         // if user is already signed up, remove the user from the tournament
         currentUser.pstatus = 0;
         client.tournaments.setTournamentUser.run(currentUser);
         client.tournaments.updateSignup(client, currentUser, "Remove");
-        processRole(message);
         message.reply("Your signup has been removed!");
+    }
+    else if (currentUser.pstatus === 2 || currentUser.pstatus > 100) {
+        message.reply("The draft has already started, please contact the hosting commissioner to remove your signup.");
     }
     else {
         // check tournament status
@@ -27,7 +29,6 @@ exports.run = async (client, message, args, level) => {
             currentUser.pstatus = 1;
             client.tournaments.setTournamentUser.run(currentUser);
             client.tournaments.updateSignup(client, currentUser, "Add");
-            processRole(message);
             message.reply("Your signup has been added!");
         }
     }
@@ -46,16 +47,3 @@ exports.help = {
     description: "Signs user up for a tournament as a player",
     usage: "signup"
 };
-
-function processRole(message) {
-     const roleToCheck = message.guild.roles.find(role => role.name === "TToC Players");
-    // check whether to add or remove role
-    if (message.member.roles.has(roleToCheck.id)) {
-        // remove role from member
-        message.member.removeRole(roleToCheck).catch(console.error);
-    }
-    else {
-        // add role to member
-        message.member.addRole(roleToCheck).catch(console.error);
-    }
-}

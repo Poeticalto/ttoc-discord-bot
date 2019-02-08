@@ -49,7 +49,9 @@ tagproname TEXT,
 position TEXT,
 mic TEXT,
 ping INTEGER,
-pstatus INTEGER
+pstatus INTEGER,
+lowername TEXT,
+alertstatus INTEGER
 );
 
 CREATE TABLE lounges (
@@ -116,8 +118,8 @@ CREATE TABLE blacklist (
 id TEXT PRIMARY KEY
 );
 
-INSERT INTO tournamentusers (id, tagproname, position, mic, ping, pstatus) VALUES
-("0ABCDEF", "test", "Both", "Yes", 50, 0)
+INSERT INTO tournamentusers (id, tagproname, position, mic, ping, pstatus, lowername, alertstatus) VALUES
+("0ABCDEF", "test", "Both", "Yes", 50, 0, "test", 0)
 ;
 
 INSERT INTO botstatus(id, status) VALUES ("tournaments", 0);
@@ -130,8 +132,10 @@ INSERT INTO botstatus(id, status) VALUES ("tournamentteams", 0);
     // define all of the tournament functions
     client.tournaments = {
         "getTournamentUser": db.prepare("SELECT * FROM tournamentusers WHERE id = ?;"),
-        "setTournamentUser": db.prepare("INSERT OR REPLACE INTO tournamentusers (id, tagproname, position, mic, ping, pstatus) VALUES (@id, @tagproname, @position, @mic, @ping, @pstatus);"),
+        "getLowerUser": db.prepare("SELECT * FROM tournamentusers WHERE lowername = ?;"),
+        "setTournamentUser": db.prepare("INSERT OR REPLACE INTO tournamentusers (id, tagproname, position, mic, ping, pstatus, lowername, alertstatus) VALUES (@id, @tagproname, @position, @mic, @ping, @pstatus, @lowername, @alertstatus);"),
         "resetSignups": db.prepare("UPDATE tournamentusers SET pstatus = 0;"),
+        "getAlertUsers": db.prepare("SELECT * FROM tournamentusers WHERE alertstatus = 1;"),
         "updateSignup": function(client, currentUser, type) {
             // build the form submission step by step
             let formSubmitURL = client.config.tournamentFormLink;

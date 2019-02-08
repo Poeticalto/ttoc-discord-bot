@@ -9,6 +9,10 @@ exports.run = async (client, message, args, level) => {
     tagproName = tagproName.join(" ");
     // check if user is already registered in the tournamentusers db
     let registerPlayer = client.tournaments.getTournamentUser.get(message.author.id);
+    let lowerPlayer = client.tournaments.getLowerUser.get(tagproName.toLowerCase());
+    if (!!lowerPlayer) {
+        return message.channel.send("Sorry, someone else has that tagpro username, try another name!");
+    }
     // if user is not defined
     if (!registerPlayer) {
         // registerCheck defines how many checks have passed
@@ -75,7 +79,9 @@ exports.run = async (client, message, args, level) => {
                 position: positionProcess,
                 mic: micProcess,
                 ping: pingProcess,
-                pstatus: 0
+                pstatus: 0,
+                lowername: tagproName.toLowerCase(),
+                alertstatus: 0
             };
             // write user information to db
             client.tournaments.setTournamentUser.run(registerPlayer);
