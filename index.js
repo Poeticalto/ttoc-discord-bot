@@ -150,7 +150,7 @@ INSERT INTO botstatus(id, status) VALUES ("tournamentteams", 0);
             // add captain status
             formSubmitURL += client.config.tournamentFormCap + "=" + "No&";
             // add form type
-            if (currentUser.pstatus === 2) {
+            if (currentUser.pstatus === 100) {
                 formSubmitURL += client.config.tournamentFormCap + "=" + "Yes&";
                 formSubmitURL += client.config.tournamentFormType + "=" + type + "&";
             }
