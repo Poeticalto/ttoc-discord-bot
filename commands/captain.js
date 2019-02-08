@@ -5,6 +5,7 @@ exports.run = async (client, message, args, level) => {
     }
     else if (currentUser.pstatus === 100) {// demote to player
         currentUser.pstatus = 1;
+        client.tournaments.setTournamentUser.run(currentUser);
         client.tournaments.updateSignup(client, currentUser, "Edit");
         return message.reply("Your signup has been changed to player!");
     }
