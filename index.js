@@ -3,6 +3,8 @@ const Discord = require("discord.js");
 const client = new Discord.Client();
 const {google} = require("googleapis");
 
+const SCOPES = ['https://www.googleapis.com/auth/script.projects', 'https://www.googleapis.com/auth/forms', 'https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/script.scriptapp', 'https://www.googleapis.com/auth/script.container.ui', 'https://www.googleapis.com/auth/script.external_request'];
+
 const { promisify } = require("util");
 const readdir = promisify(require("fs").readdir);
 const Enmap = require("enmap");
@@ -23,10 +25,9 @@ const badWords = require("bad-words");
 const badFilter = new badWords();
 
 const schedule = require("node-schedule");
-const axios = require('axios');
+const axios = require("axios");
 
-const init = async () => {
-
+const init = async () => {    
     // connect to bot users database
     let stmt = db.prepare(`SELECT name
 FROM sqlite_master
@@ -128,7 +129,7 @@ INSERT INTO botstatus(id, status) VALUES ("tournamentteams", 0);
 `;
         db.exec(sqlInit);
     }
-
+    
     // define all of the tournament functions
     client.tournaments = {
         "getTournamentUser": db.prepare("SELECT * FROM tournamentusers WHERE id = ?;"),
@@ -136,11 +137,12 @@ INSERT INTO botstatus(id, status) VALUES ("tournamentteams", 0);
         "setTournamentUser": db.prepare("INSERT OR REPLACE INTO tournamentusers (id, tagproname, position, mic, ping, pstatus, lowername, alertstatus) VALUES (@id, @tagproname, @position, @mic, @ping, @pstatus, @lowername, @alertstatus);"),
         "resetSignups": db.prepare("UPDATE tournamentusers SET pstatus = 0;"),
         "getAlertUsers": db.prepare("SELECT * FROM tournamentusers WHERE alertstatus = 1;"),
+        "getPlayers": db.prepare("SELECT * FROM tournamentusers WHERE pstatus = ?;"),
         "updateSignup": function(client, currentUser, type) {
             // build the form submission step by step
             let formSubmitURL = client.config.tournamentFormLink;
             // add name first
-            formSubmitURL += client.config.tournamentFormName + "=" + currentUser.tagproname + "&";
+            formSubmitURL += client.config.tournamentFormName + "=" + encodeURIComponent(currentUser.tagproname) + "&";
             // add position
             formSubmitURL += client.config.tournamentFormPos + "=" + currentUser.position + "&";
             // add mic
@@ -150,11 +152,11 @@ INSERT INTO botstatus(id, status) VALUES ("tournamentteams", 0);
             // add captain status
             formSubmitURL += client.config.tournamentFormCap + "=" + "No&";
             // add form type
-            if (currentUser.pstatus === 100) {
+            if (currentUser.pstatus >= 100) {
                 formSubmitURL += client.config.tournamentFormCap + "=" + "Yes&";
                 formSubmitURL += client.config.tournamentFormType + "=" + type + "&";
             }
-            else if (currentUser.pstatus === 1) {
+            else if (currentUser.pstatus >= 1) {
                 formSubmitURL += client.config.tournamentFormCap + "=" + "No&";
                 formSubmitURL += client.config.tournamentFormType + "=" + type + "&";
             }
@@ -164,6 +166,20 @@ INSERT INTO botstatus(id, status) VALUES ("tournamentteams", 0);
             }
             formSubmitURL += "submit=Submit";
 
+            axios({
+                method: "post",
+                url: formSubmitURL
+            });
+        },
+        "submitPick": function(client, round, capNum, name) {
+            let formSubmitURL = client.config.pickFormLink;
+            // add round first
+            formSubmitURL += client.config.pickFormRound + "=" + round + "&";
+            // add capNum
+            formSubmitURL += client.config.pickFormCapNum + "=" + capNum + "&";
+            // add name
+            formSubmitURL += client.config.pickFormName + "=" + name + "&";
+            formSubmitURL += "submit=Submit";
             axios({
                 method: "post",
                 url: formSubmitURL
@@ -185,14 +201,15 @@ INSERT INTO botstatus(id, status) VALUES ("tournamentteams", 0);
     // define all of the scrimlist functions
     client.scrimList = {
         "getScrimList": db.prepare("SELECT * FROM scrimlist ORDER BY nametype ASC, name ASC;"),
+        "getScrimType": db.prepare("SELECT * FROM scrimlist WHERE nametype = ?;"),
         "getScrimPlayer": db.prepare("SELECT * FROM scrimlist WHERE id = ?;"),
         "setScrimPlayer": db.prepare("INSERT OR REPLACE INTO scrimlist (id, name, nametype) VALUES (@id, @name, @nametype);"),
         "deleteScrimPlayer": db.prepare("DELETE FROM scrimlist WHERE id = ?;"),
-        "clearScrimlist": db.prepare("DELETE FROM scrimlist;")
+        "clearScrimList": db.prepare("DELETE FROM scrimlist;")
     };
     let resetScrimList = schedule.scheduleJob('0 0 5 * * *', function(){
         // clear scrim list at 5 AM local time
-        client.scrimList.clearScrimlist.run();
+        client.scrimList.clearScrimList.run();
         client.logger.log("scrim list db cleared.");
     });
     client.logger.log("scrimlist db functions loaded.");
@@ -203,6 +220,12 @@ INSERT INTO botstatus(id, status) VALUES ("tournamentteams", 0);
         "setBotStatus": db.prepare("INSERT OR REPLACE INTO botstatus (id, status) VALUES (@id, @status);")
     };
     client.logger.log("botstatus db functions loaded.");
+
+    client.botText = {
+        "getTextStatus": db.prepare("SELECT * FROM botstatus WHERE id = ?;"),
+        "setTextStatus": db.prepare("INSERT OR REPLACE INTO botstatus (id, status) VALUES (@id, @status);")
+    };
+    client.logger.log("bottext db functions loaded.");
     
     client.teamPerms = {
         "getTeamPerms": db.prepare("SELECT * FROM teamperms WHERE id = ?;"),
@@ -221,6 +244,54 @@ INSERT INTO botstatus(id, status) VALUES ("tournamentteams", 0);
         "getMap": db.prepare("SELECT * FROM maps WHERE lowerid = ?;"),
         "setMap": db.prepare("INSERT OR REPLACE INTO maps (lowerid, standardid, author, image) VALUES (@lowerid, @standardid, @author, @image);")
     };
+    client.logger.log("map db functions loaded.");
+    
+    const gAppKey = client.config.gAppKey;
+    const gAppToken = client.config.gAppToken;
+    const {client_secret, client_id, redirect_uris} = gAppKey.installed;
+    const tempoAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
+    tempoAuth2Client.setCredentials(gAppToken);
+    
+    client.gApps = {
+        "oAuth2Client": tempoAuth2Client,
+        "callAppsScript": function (funcName, client, auth) {
+            const scriptId = client.config.appScriptToken;
+            const script = google.script({version: 'v1', auth});
+            let response;
+            // Make the API request. The request object is included here as 'resource'.
+            script.scripts.run({
+                resource: {
+                    function: funcName,
+                },
+                scriptId: scriptId,
+            }, function (err, resp) {
+                if (err) {
+                    // The API encountered a problem before the script started executing.
+                    response = 'The API returned an error: ' + err;
+                }
+                if (resp.error) {
+                    // The API executed, but the script returned an error.
+                    // Extract the first (and only) set of error details. The values of this
+                    // object are the script's 'errorMessage' and 'errorType', and an array
+                    // of stack trace elements.
+                    const error = resp.error.details[0];
+                    response = 'Script error message: ' + error.errorMessage;
+                } else {
+                    // The structure of the result will depend upon what the Apps Script
+                    // function returns. Here, the function returns an Apps Script Object
+                    // with String keys and values, and so the result is treated as a
+                    // Node.js object (folderSet).
+                    response = resp.data.response.result;
+                    let writeStatus = {
+                        "id": funcName,
+                        "status": JSON.stringify(response)
+                    };
+                    client.botText.setTextStatus.run(writeStatus);
+                }
+            });
+        }
+    };
+    client.logger.log("gApp functions loaded.");
     
     // return a new timestamp
     client.getTime = () => {return moment().format()};
@@ -234,11 +305,13 @@ INSERT INTO botstatus(id, status) VALUES ("tournamentteams", 0);
         });
         return uuid;
     };
+    
     client.getStreams = axios.create({
       baseURL: 'https://api.twitch.tv/helix/streams',
       timeout: 1000,
       headers: {'Client-ID': client.config.twitchToken}
     });
+    
     badFilter.addWords(...client.config.addBadWords);
     // remove bad words in the config from the bad words list
     badFilter.removeWords(...client.config.removeBadWords);
