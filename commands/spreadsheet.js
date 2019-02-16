@@ -1,7 +1,21 @@
-// The alert command gives or removes the "TToC Alerts" role from the member
+// The spreadsheet command returns the current season's spreadsheet for the user
 
 exports.run = (client, message, args, level) => {
-    message.channel.send("Here's the spreadsheet: <https://docs.google.com/spreadsheets/d/1Ovc7sI35598CTTyrS5pSFW2V_C_XbXI_vP4LcEQKFIo/edit#gid=1836225865>");
+    let tournamentStatus = client.botStatus.getBotStatus.get("tournaments");
+    if (tournamentStatus.status === 0) {
+        // If a tournament is not running, prevent message
+        message.channel.send("Sorry, signups are currently closed for TToC.");
+    }
+    else {
+        let currentSheet = client.botText.getTextStatus.get("FormSetup");
+        if (currentSheet && currentSheet.status) {
+            let info = JSON.parse(currentSheet.status);
+            message.channel.send(`Here's the Season ${info[0]} spreadsheet: <${info[1]}>`);
+        }
+        else {
+            message.channel.send("Sorry, there was an error getting the spreadsheet.");
+        }
+    }
 };
 
 exports.conf = {
