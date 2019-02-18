@@ -4,7 +4,7 @@
 
 module.exports = async (client, member) => {
     // find the channel, then send the welcome message
-    member.guild.channels.find(channel => channel.name === client.config.welcomeChannel).send(`Welcome to the ${member.guild.name}, ${member}!\nTo get my help, just type any of these commands to start:\n\nCommand [Argument] :: Description\n!help                                  :: Gives all available commands\n!league [abbr]                 :: Gives a league role\n!lounge [name]               :: Creates a voice lounge in the General Lounges section\n\nBy default, you will only receive notifications on this server when you are mentioned. If you don't know how to set up notifications for channels on Discord, read the following:\n<https://support.discordapp.com/hc/en-us/articles/215253258-Notifications-Settings-101>`);
+    
     let someBallRole = member.guild.roles.find(role => role.name === "Some Ball");
     member.addRole(someBallRole).catch(console.error);
     let currentTime = new Date().getTime();
@@ -24,4 +24,5 @@ module.exports = async (client, member) => {
         convertedDifference = (differenceTime / 86400000) + " days";
     }
     member.guild.channels.find(channel => channel.name === "join-feed").send(`Age of ${member} is: ${convertedDifference}`);
+    member.guild.channels.find(channel => channel.name === client.config.welcomeChannel).send(`Welcome to the ${member.guild.name} Discord, ${member}!\nYou need to be verified by an admin or a captain before you are allowed to roam freely. If you can't reach an admin here, send a private message to your captain asking them to give you a team role!`);
 };

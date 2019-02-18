@@ -48,6 +48,7 @@ exports.help = {
 function processRole(abbrProcess, memberEdit, message) {
     // get the team role
     const roleToCheck = message.guild.roles.find(role => role.name.toLowerCase() === abbrProcess);
+    const someBallCheck = message.guild.roles.find(role => role.name === "Some Ball");
     abbrProcess = roleToCheck.name;
     // remove role if member has role
     if (roleToCheck !== null && memberEdit.roles.has(roleToCheck.id)) {
@@ -56,6 +57,9 @@ function processRole(abbrProcess, memberEdit, message) {
     }
     else {
         if (roleToCheck !== null) {
+            if (someBallCheck !== null && memberEdit.roles.has(someBallCheck.id)) {
+                memberEdit.removeRole(someBallCheck).catch(console.error);
+            }
             // add role if member doesn't have role
             memberEdit.addRole(roleToCheck).catch(console.error);
             return `added ${abbrProcess} role for ${memberEdit.displayName}`;
