@@ -135,7 +135,7 @@ INSERT INTO botstatus(id, status) VALUES ("tournamentteams", 0);
         "getTournamentUser": db.prepare("SELECT * FROM tournamentusers WHERE id = ?;"),
         "getLowerUser": db.prepare("SELECT * FROM tournamentusers WHERE lowername = ?;"),
         "setTournamentUser": db.prepare("INSERT OR REPLACE INTO tournamentusers (id, tagproname, position, mic, ping, pstatus, lowername, alertstatus) VALUES (@id, @tagproname, @position, @mic, @ping, @pstatus, @lowername, @alertstatus);"),
-        "resetSignups": db.prepare("UPDATE tournamentusers SET pstatus = 0;"),
+        "resetSignups": db.prepare("UPDATE tournamentusers SET pstatus = 0 WHERE NOT pstatus = -1;"),
         "getAlertUsers": db.prepare("SELECT * FROM tournamentusers WHERE alertstatus = 1;"),
         "getPlayers": db.prepare("SELECT * FROM tournamentusers WHERE pstatus = ?;"),
         "updateSignup": function(client, currentUser, type) {
