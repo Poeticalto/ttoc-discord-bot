@@ -6,19 +6,20 @@ const axios = require('axios');
 
 exports.run = (client, message, args, level) => {
     let tag;
-    if (!args){
-        tag = "";
+    console.log(args.length);
+    if (!args || args.length < 1){
+        tag = "random";
     }
     else {
         tag = args.join("+");
-        console.log(tag);
     }
-    axios.defaults.baseURL = "http://api.giphy.com/v1/gifs/random?tag="+tag+"&api_key="+client.config.giphyToken+"&rating=g&limit=1";
+    console.log(tag);
+    axios.defaults.baseURL = `https://api.tenor.com/v1/random?key=${client.config.tenorToken}&q=${tag}&locale=en_US&contentfilter=medium&media_filter=minimal&ar_range=all&limit=1`;
     axios.get()
         .then(function (response) {
         if (!!response.data) {
             const exampleEmbed = new Discord.RichEmbed()
-                .setImage(response.data.data.images.original.url)
+                .setImage(response.data.results[0].media[0].gif.url)
                 .setColor('RANDOM');
             message.channel.send(exampleEmbed);
         }
