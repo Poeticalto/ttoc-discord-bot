@@ -1,6 +1,6 @@
 // The trades command starts a trade period for tournament captains
 
-exports.run = (client, message, args, level) => {
+exports.run = async (client, message, args, level) => {
     let rawDraftData = client.botText.getTextStatus.get("DraftBoardSetup");
     let capOrder;
     if (rawDraftData && rawDraftData.status) {
