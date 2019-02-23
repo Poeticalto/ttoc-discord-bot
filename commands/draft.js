@@ -19,6 +19,11 @@ exports.run = async (client, message, args, level) => {
             currentPlayer.pstatus = 2;
             client.tournaments.setTournamentUser.run(currentPlayer);
         }
+        for (let z = 1; z < capOrder.length; z++) {
+            let captainData = client.tournaments.getLowerUser.get(capOrder[z].toLowerCase());
+            let currentCaptain = message.guild.members.get(captainData.id);
+            await currentCaptain.send(`Hey ${captainData.tagproname}, the draft is starting! Be sure to check here during the draft and I'll message you when it's your pick!`);
+        }
     }
     else {
         draftRound = args[0];
@@ -89,7 +94,14 @@ exports.run = async (client, message, args, level) => {
         else {
             tempStarter = capOrder.length - 1;
         }
-        for (let i = tempStarter; i > 0; i--) {
+        let tempEnd;
+        if (j === 3){
+            tempEnd = 1;
+        }
+        else {
+            tempEnd = 0;
+        }
+        for (let i = tempStarter; i > tempEnd; i--) {
             let captainData = client.tournaments.getLowerUser.get(capOrder[i].toLowerCase());
             let currentCaptain = message.guild.members.get(captainData.id);
             message.channel.send(`${captainData.tagproname} is drafting!`);
@@ -139,6 +151,18 @@ exports.run = async (client, message, args, level) => {
                     }
                 });
         }
+    }
+    if (j ===3) {
+        let finalPlayer = client.tournaments.getLowerUser.get(playersArr[0]);
+        let finalCaptainData = client.tournaments.getLowerUser.get(capOrder[1].toLowerCase());
+        let finalCaptain = message.guild.members.get(finalCaptainData.id);
+        finalCaptain.send("Success! You drafted: " + finalPlayer.tagproname);
+        message.guild.members.get(finalPlayer.id).send(`Congrats, you were drafted to Team 1 by ${finalCaptainData.tagproname}!`);
+        message.channel.send(`${finalCaptainData.tagproname} has drafted ${finalPlayer.tagproname}`);
+        message.channel.send("The tournament draft has concluded! Remember to use team abbreviations and have fun!");
+        finalPlayer.pstatus = 3;
+        client.tournaments.setTournamentUser.run(finalPlayer);
+        client.tournaments.submitPick(client, 3, 1, finalPlayer.tagproname);
     }
     for (let i = 1; i < capOrder.length; i++) {
         let captainData = client.tournaments.getLowerUser.get(capOrder[i].toLowerCase());

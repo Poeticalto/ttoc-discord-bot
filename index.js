@@ -286,6 +286,10 @@ INSERT INTO botstatus(id, status) VALUES ("tournamentteams", 0);
                         "id": funcName,
                         "status": JSON.stringify(response)
                     };
+                    // define custom overwrite
+                    if (funcName === "updateSignups") {
+                        writeStatus.id = "DraftBoardSetup";
+                    }
                     client.botText.setTextStatus.run(writeStatus);
                 }
             });
@@ -295,7 +299,8 @@ INSERT INTO botstatus(id, status) VALUES ("tournamentteams", 0);
     
     // return a new timestamp
     client.getTime = () => {return moment().format()};
-    // add bad words in the config to the bad words list
+    
+    // define UUID generator
     client.newUUID = () => {
         var dt = new Date().getTime();
         var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -306,12 +311,14 @@ INSERT INTO botstatus(id, status) VALUES ("tournamentteams", 0);
         return uuid;
     };
     
+    // define axios request for getting twitch streams
     client.getStreams = axios.create({
       baseURL: 'https://api.twitch.tv/helix/streams',
       timeout: 1000,
       headers: {'Client-ID': client.config.twitchToken}
     });
-    
+
+    // add bad words in the config to the bad words list    
     badFilter.addWords(...client.config.addBadWords);
     // remove bad words in the config from the bad words list
     badFilter.removeWords(...client.config.removeBadWords);
@@ -349,6 +356,7 @@ INSERT INTO botstatus(id, status) VALUES ("tournamentteams", 0);
     }
     // Here we login the client.
     client.login(client.config.discordToken);
+    // Add an interval for updating live streams
     setInterval(function(){ client.emit("updateStreams"); }, 60000);
     // End top-level async/await function.
 };
