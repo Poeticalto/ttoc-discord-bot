@@ -6,14 +6,12 @@ const axios = require('axios');
 
 exports.run = (client, message, args, level) => {
     let tag;
-    console.log(args.length);
     if (!args || args.length < 1){
         tag = "random";
     }
     else {
         tag = args.join("+");
     }
-    console.log(tag);
     axios.defaults.baseURL = `https://api.tenor.com/v1/random?key=${client.config.tenorToken}&q=${tag}&locale=en_US&contentfilter=medium&media_filter=minimal&ar_range=all&limit=1`;
     axios.get()
         .then(function (response) {
