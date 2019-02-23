@@ -37,7 +37,7 @@ exports.run = async (client, message, args, level) => {
 exports.conf = {
     enabled: true,
     guildOnly: false,
-    aliases: [],
+    aliases: ["singup"],
     permLevel: "User"
 };
 

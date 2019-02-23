@@ -22,8 +22,8 @@ exports.conf = {
 };
 
 exports.help = {
-    name: "pd",
+    name: "trades",
     category: "Tournaments",
     description: "Prepare tournament draft",
-    usage: "pd"
+    usage: "trades"
 };
