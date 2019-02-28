@@ -1,6 +1,7 @@
 // The alert command gives or removes alert status for a tournament user
 
 exports.run = (client, message, args, level) => {
+    let memberEdit = message.member;
     const roleToCheck = message.guild.roles.find(role => role.name === "NTA");
     if (memberEdit.roles.has(roleToCheck.id)) {
         memberEdit.removeRole(roleToCheck).catch(console.error);
