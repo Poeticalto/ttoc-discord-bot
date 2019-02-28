@@ -5,11 +5,11 @@ exports.run = (client, message, args, level) => {
     const roleToCheck = message.guild.roles.find(role => role.name === "NTA");
     if (memberEdit.roles.has(roleToCheck.id)) {
         memberEdit.removeRole(roleToCheck).catch(console.error);
-        message.channel.send("NTA role successfully removed!");
+        message.channel.send("Success! You won't receive push notifications for tournaments from this server when you're online!");
     }
     else {
         memberEdit.addRole(roleToCheck).catch(console.error);
-        message.channel.send("NTA role successfully added!");
+        message.channel.send("Success! You will receive push notifications for tournaments from this server when you're online!");
     }
 };
 
