@@ -19,12 +19,12 @@ exports.run = async (client, message, args, level) => {
     }
     // get member from message author
     const author = message.member;
-	const leagueList = client.config.leagueList;
+    const leagueList = client.config.leagueList;
     // check if member has created another active lounge
     const roleCheck = client.lounges.checkLoungeAdmin.get(message.author.id);
     // if member already has an active lounge, then deny
     if (roleCheck !== undefined && level < 2) {// members with level >= 2 are trusted to not abuse lounge ommand
-        message.channel.send("Sorry, you cannot create more than one active lounge at a time.");
+        return message.channel.send("Sorry, you cannot create more than one active lounge at a time.");
     }
     else {
         // otherwise, check if another lounge exists with the given lounge name
@@ -32,19 +32,19 @@ exports.run = async (client, message, args, level) => {
         // create lounge if it does not exist
         if (testChannel === null && typeof testChannel === "object") {
             // get lounge section to place channels under
-			let loungeSection;
-			let sectionName;
+            let loungeSection;
+            let sectionName;
             let captainRole;
-			if (message.channel.parent && client.config.customLoungeSections.indexOf(message.channel.parent.name) > -1 && message.channel.name.indexOf("general") === -1) {
-				loungeSection = message.channel.parent;
-				sectionName = message.channel.parent.name;
+            if (message.channel.parent && client.config.customLoungeSections.indexOf(message.channel.parent.name) > -1 && message.channel.name.indexOf("general") === -1) {
+                loungeSection = message.channel.parent;
+                sectionName = message.channel.parent.name;
                 captainRole = message.guild.roles.find(role => role.name === sectionName+" Captain");
-			}
-			else {
-				loungeSection = message.guild.channels.find(channel => channel.name === "General Lounges");
-				sectionName = "General Lounges";
+            }
+            else {
+                loungeSection = message.guild.channels.find(channel => channel.name === "General Lounges");
+                sectionName = "General Lounges";
                 captainRole = message.guild.roles.find(role => role.name === "Moderator");
-			}
+            }
             // get admin role to add permissions
             const adminRole = message.guild.roles.find(role => role.name === "Admin");
             // get bot role to add permissions
@@ -102,10 +102,10 @@ exports.run = async (client, message, args, level) => {
                             id: adminRole.id, // set permissions for admin role
                             allowed: ['CREATE_INSTANT_INVITE',  'MANAGE_CHANNELS', 'MANAGE_ROLES_OR_PERMISSIONS', 'MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS', 'VIEW_CHANNEL', 'CONNECT', 'SPEAK', 'USE_VAD', 'MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS', 'PRIORITY_SPEAKER']
                         },
-						{
-							id: captainRole.id,
-							allowed: ['MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS']
-					    },
+                        {
+                            id: captainRole.id,
+                            allowed: ['MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS']
+                        },
                         {
                             id: botRole.id, // set permissions for bot role
                             allowed: ['CREATE_INSTANT_INVITE',  'MANAGE_CHANNELS', 'MANAGE_ROLES_OR_PERMISSIONS', 'MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS', 'VIEW_CHANNEL', 'CONNECT', 'SPEAK', 'USE_VAD', 'MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS', 'PRIORITY_SPEAKER']
