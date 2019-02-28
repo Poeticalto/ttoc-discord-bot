@@ -7,6 +7,9 @@ exports.run = async (client, message, args, level) => {
         // return if user doesn't exist in the db
         return message.reply("Sorry, your information isn't currently saved! Use !register to add your information!");
     }
+    else if (currentUser.pstatus === -1) {
+        message.reply("you are currently banned from participating in tournaments and are not eligible to signup. Please contact the hosting commissioner if you believe this is an error.");
+    }
     else if (currentUser.pstatus === 1 || currentUser.pstatus === 100) {
         // if user is already signed up, remove the user from the tournament
         currentUser.pstatus = 0;
