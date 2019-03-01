@@ -11,6 +11,13 @@ module.exports = async (client, message) => {
     let settings;
     if (message.guild) {
         settings = message.settings = client.getSettings(message.guild.id);
+        if (message.channel.name === "highlights") {
+            if (message.content.includes('gfycat.com'||'imgur.com'||'streamable.com'||'clips.twitch.tv')) {
+                return await message.react("⭐");
+            }
+            await message.delete();
+            return message.author.send(`Sorry ${message.author.username}, your message was deleted from the highlights channel because a whitelisted link was not detected. Please use one of these sites or use the general chat for highlight discussion or to use bot commands:\n<https://www.gfycat.com/>\n<https://www.imgur.com/>\n<https://www.streamable.com/>\n<https://clips.twitch.tv/>\n\nIn case you need it, here are the contents of your deleted message: ${message.cleanContent}`);
+        }            
     }
     else {
         settings = message.settings = client.config.defaultSettings;
