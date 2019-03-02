@@ -15,7 +15,7 @@ exports.run = async (client, message, args, level) => {
     if (loungeName === null) return message.reply("\nSorry, your lounge name doesn't work. Try using alphanumeric characters for your lounge name.");
     loungeName = loungeName.join("").trim();
     if (loungeName.length > 30) {
-        loungeName = loungeName.substring(0,30);
+        loungeName = loungeName.substring(0,30).trim();
     }
     // get member from message author
     const author = message.member;

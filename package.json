@@ -1,7 +1,7 @@
 {
   "name": "ttoc-discord-bot",
   "version": "1.0.0",
-  "description": "",
+  "description": "An updated version of ttoc-mumble-bot to run tournaments on Discord. Structure is based on [guide-bot.](https://github.com/AnIdiotsGuide/guidebot/)",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -34,5 +34,6 @@
     "node-schedule": "^1.3.0",
     "request": "^2.88.0",
     "uws": "^99.0.0"
-  }
+  },
+  "devDependencies": {}
 }
