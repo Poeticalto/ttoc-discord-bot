@@ -30,18 +30,18 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             const parseArrayLength = parseArray.length;
             for (let i = 0; i < parseArrayLength; i++) {
                 // check if character is text or an emoticon
-                if (parseArray[i]["text"].match(/[a-z]/i)) {
+                if (parseArray[i].text.match(/[a-z]/i)) {
                     // get array to check if letter has been used already
                     let checkLetters = splitArray.slice(0,i + emojiCount);
-                    if (checkLetters.includes(parseArray[i]["text"]) === false && letterCount < 20) {
+                    if (checkLetters.includes(parseArray[i].text) === false && letterCount < 20) {
                         // if letter has not been used and there are less than twenty unique reactions, then add letter as reaction
-                        await messagea.react(getUnicodeChar(parseArray[i]["text"])).catch(console.error);
+                        await messagea.react(getUnicodeChar(parseArray[i].text)).catch(console.error);
                         // increment letter count
                         letterCount++;
                     }
                     else if (letterCount < 20) {
                         // use alternate letter if letter has been used and there are less than twenty unique reactions, then add letter as reaction
-                        await messagea.react(getAltUnicodeChar(parseArray[i]["text"])).catch(console.error);
+                        await messagea.react(getAltUnicodeChar(parseArray[i].text)).catch(console.error);
                         // increment letter count
                         letterCount++;
                     }
@@ -51,7 +51,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                 }
                 else if (parseArray[i]["type"] === 'emoji' && letterCount < 20) {
                     // if character is emoticon and there are less than twenty unique reactions, add emoticon
-                    await messagea.react(parseArray[i]["text"]).catch(console.error);
+                    await messagea.react(parseArray[i].text).catch(console.error);
                     // increment both emojiCount and letterCount
                     emojiCount++;
                     letterCount++;
@@ -106,7 +106,7 @@ function getAltUnicodeChar(getCharOf) {
         'g': '??',
         'h': '??',
         'i': '??',
-        'j': '??'
+        'j': '??',
         'k': '??',
         'l': '??',
         'm': '??',
@@ -122,7 +122,7 @@ function getAltUnicodeChar(getCharOf) {
         'w': '??',
         'x': '?',
         'y': '??',
-        'z': '??'        
+        'z': '??'
     }
     return altUnicodeChars[getCharOf];
 }
