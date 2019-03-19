@@ -33,25 +33,28 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                 if (parseArray[i]["text"].match(/[a-z]/i)) {
                     // get array to check if letter has been used already
                     let checkLetters = splitArray.slice(0,i + emojiCount);
-                    if (checkLetters.includes(parseArray[i]["text"]) === false) {
-                        // if letter has not been used
-                        if (letterCount < 20) {
-                            // and there are less than twenty unique reactions, then add letter as reaction
-                            await messagea.react(getUnicodeChar(parseArray[i]["text"])).catch(console.error);
-                            // increment letter count
-                            letterCount++;
-                        }
-                    }
-                }
-                else if (parseArray[i]["type"] === 'emoji') {
-                    // if character is emoticon
-                    if (letterCount < 20) {
-                        // if there are less than twenty unique reactions, add emoticon
-                        await messagea.react(parseArray[i]["text"]).catch(console.error);
-                        // increment both emojiCount and letterCount
-                        emojiCount++;
+                    if (checkLetters.includes(parseArray[i]["text"]) === false && letterCount < 20) {
+                        // if letter has not been used and there are less than twenty unique reactions, then add letter as reaction
+                        await messagea.react(getUnicodeChar(parseArray[i]["text"])).catch(console.error);
+                        // increment letter count
                         letterCount++;
                     }
+                    else if (letterCount < 20) {
+                        // use alternate letter if letter has been used and there are less than twenty unique reactions, then add letter as reaction
+                        await messagea.react(getAltUnicodeChar(parseArray[i]["text"])).catch(console.error);
+                        // increment letter count
+                        letterCount++;
+                    }
+                    else {
+                        return;
+                    }
+                }
+                else if (parseArray[i]["type"] === 'emoji' && letterCount < 20) {
+                    // if character is emoticon and there are less than twenty unique reactions, add emoticon
+                    await messagea.react(parseArray[i]["text"]).catch(console.error);
+                    // increment both emojiCount and letterCount
+                    emojiCount++;
+                    letterCount++;
                 }
             }
         });
@@ -89,6 +92,39 @@ function getUnicodeChar(getCharOf) {
         'z': '🇿'
     };
     return unicodeChars[getCharOf];
+}
+
+function getAltUnicodeChar(getCharOf) {
+    // return alternate emoji for letter
+    const altUnicodeChars = {
+        'a': '??',
+        'b': '??',
+        'c': '?',
+        'd': '??',
+        'e': '??',
+        'f': '??',
+        'g': '??',
+        'h': '??',
+        'i': '??',
+        'j': '??'
+        'k': '??',
+        'l': '??',
+        'm': '??',
+        'n': '?',
+        'o': '???',
+        'p': '??',
+        'q': '??',
+        'r': '??',
+        's': '??',
+        't': '??',
+        'u': '?',
+        'v': '??',
+        'w': '??',
+        'x': '?',
+        'y': '??',
+        'z': '??'        
+    }
+    return altUnicodeChars[getCharOf];
 }
 
 exports.conf = {
