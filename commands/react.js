@@ -39,12 +39,6 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                         // increment letter count
                         letterCount++;
                     }
-                    else if (letterCount < 20) {
-                        // use alternate letter if letter has been used and there are less than twenty unique reactions, then add letter as reaction
-                        await messagea.react(getAltUnicodeChar(parseArray[i].text)).catch(console.error);
-                        // increment letter count
-                        letterCount++;
-                    }
                     else {
                         return;
                     }
@@ -55,6 +49,9 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                     // increment both emojiCount and letterCount
                     emojiCount++;
                     letterCount++;
+                }
+                else if (letterCount >= 20) {
+                    return;
                 }
             }
         });
@@ -94,7 +91,7 @@ function getUnicodeChar(getCharOf) {
     return unicodeChars[getCharOf];
 }
 
-function getAltUnicodeChar(getCharOf) {
+/*function getAltUnicodeChar(getCharOf) {
     // return alternate emoji for letter
     const altUnicodeChars = {
         'a': '??',
@@ -125,7 +122,7 @@ function getAltUnicodeChar(getCharOf) {
         'z': '??'
     }
     return altUnicodeChars[getCharOf];
-}
+}*/
 
 exports.conf = {
     enabled: true,
