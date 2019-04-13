@@ -45,7 +45,7 @@ module.exports = (client) => {
                     // otherwise, compare the contents of each field
                     let check = 0;
                     for (let i = 0; i < exampleEmbed.fields.length; i++) {
-                        if (oldMessage.embeds[0].fields[i].value === exampleEmbed.fields[i].value && oldMessage.embeds[0].fields[i].name === exampleEmbed.fields[i].name) {
+                        if (oldMessage.embeds[0].fields[i].value.trim() === exampleEmbed.fields[i].value.trim() && oldMessage.embeds[0].fields[i].name.trim() === exampleEmbed.fields[i].name.trim()) {
                             check++;
                         }
                     }
