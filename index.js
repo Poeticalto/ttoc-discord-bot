@@ -222,8 +222,8 @@ INSERT INTO botstatus(id, status) VALUES ("tournamentteams", 0);
     client.logger.log("botstatus db functions loaded.");
 
     client.botText = {
-        "getTextStatus": db.prepare("SELECT * FROM botstatus WHERE id = ?;"),
-        "setTextStatus": db.prepare("INSERT OR REPLACE INTO botstatus (id, status) VALUES (@id, @status);")
+        "getTextStatus": db.prepare("SELECT * FROM bottext WHERE id = ?;"),
+        "setTextStatus": db.prepare("INSERT OR REPLACE INTO bottext (id, status) VALUES (@id, @status);")
     };
     client.logger.log("bottext db functions loaded.");
     
@@ -314,7 +314,7 @@ INSERT INTO botstatus(id, status) VALUES ("tournamentteams", 0);
     // define axios request for getting twitch streams
     client.getStreams = axios.create({
       baseURL: 'https://api.twitch.tv/helix/streams',
-      timeout: 1000,
+      timeout: 10000,
       headers: {'Client-ID': client.config.twitchToken}
     });
 
