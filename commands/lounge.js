@@ -44,11 +44,11 @@ exports.run = async (client, message, args, level) => {
                 sectionName = message.channel.parent.name;
                 if (message.channel.name === "mltp-crc") {
                     adminRole = message.guild.roles.find(role => role.name === "MLTP CRC");
-                    captainRole = message.guild.roles.find(role => role.name === "Majors Captains");
+                    captainRole = message.guild.roles.find(role => role.name === "Majors Captain");
                 }
                 else if (message.channel.name === "nltp-crc") {
                     adminRole = message.guild.roles.find(role => role.name === "NLTP CRC");
-                    captainRole = message.guild.roles.find(role => role.name === "NLTP Captains");
+                    captainRole = message.guild.roles.find(role => role.name === "NLTP Captain");
                 }
                 else if (message.channel.name === "admins") {
                     adminRole = message.guild.roles.find(role => role.name === "Admin");
@@ -66,8 +66,7 @@ exports.run = async (client, message, args, level) => {
                 loungeSection = message.guild.channels.find(channel => channel.name === "General Lounges");
                 sectionName = "General Lounges";
                 captainRole = message.guild.roles.find(role => role.name === "Moderator");
-            }
-                       
+            }     
             // create the text channel with corresponding permissions
             message.guild.createChannel(("l-"+loungeName.replace(/ /g,"_").toLowerCase()), "text")
                 .then(channel => channel.setParent(loungeSection)) // set the channel in the General Lounges section
@@ -133,6 +132,9 @@ exports.run = async (client, message, args, level) => {
                     reason: 'Create Lounge' // set reason for audit log
                 })})
                 .then(async function() {
+                if (sectionName === "Private") {
+                    message.guild.channels.find(channel => channel.name === "L-"+loungeName).overwritePermissions(message.guild.defaultRole, { VIEW_CHANNEL: false });
+                }
                 // sort voice channels by name
                 const sectionChannels = message.guild.channels.filter(channel => channel.parent !== null && channel.parent.name === sectionName && channel.type === "voice");
                 const sectionChannelsKeys = doubleSort(sectionChannels.map(channel => channel.name), sectionChannels.keyArray());
@@ -141,11 +143,6 @@ exports.run = async (client, message, args, level) => {
                     await sectionChannels.find(channel => channel.id === sectionChannelsKeys[j]).setPosition(j);
                 }
             });
-            if (sectionName === "Private") {
-                message.guild.channels.find(channel => channel.name === "L-"+loungeName).overwritePermissions(message.guild.defaultRole.id, {
-                    "VIEW_CHANNEL": false
-                });
-            }
             message.channel.send("L-"+loungeName+" was successfully created in the "+sectionName+" section!");
             // create a check to delete the channel if it remains empty after thirty seconds
             setTimeout(function(){
