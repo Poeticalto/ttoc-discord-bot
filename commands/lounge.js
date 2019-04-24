@@ -44,7 +44,7 @@ exports.run = async (client, message, args, level) => {
                 sectionName = message.channel.parent.name;
                 if (message.channel.name === "mltp-crc") {
                     adminRole = message.guild.roles.find(role => role.name === "MLTP CRC");
-                    captainRole = message.guild.roles.find(role => role.name === "Majors Captain");
+                    captainRole = message.guild.roles.find(role => role.name === "MLTP Captain");
                 }
                 else if (message.channel.name === "nltp-crc") {
                     adminRole = message.guild.roles.find(role => role.name === "NLTP CRC");
