@@ -35,20 +35,39 @@ exports.run = async (client, message, args, level) => {
             let loungeSection;
             let sectionName;
             let captainRole;
-            if (message.channel.parent && client.config.customLoungeSections.indexOf(message.channel.parent.name) > -1 && message.channel.name.indexOf("general") === -1) {
+            // get admin role to add permissions
+            let adminRole;
+            // get bot role to add permissions
+            const botRole = message.guild.roles.find(role => role.name === "Bots");
+            if (message.channel.parent && message.channel.parent.name === "Private" && client.config.privateLoungeSections.indexOf(message.channel.name) > -1) {
+                loungeSection = message.channel.parent;
+                sectionName = message.channel.parent.name;
+                if (message.channel.name === "mltp-crc") {
+                    adminRole = message.guild.roles.find(role => role.name === "MLTP CRC");
+                    captainRole = message.guild.roles.find(role => role.name === "Majors Captains");
+                }
+                else if (message.channel.name === "nltp-crc") {
+                    adminRole = message.guild.roles.find(role => role.name === "NLTP CRC");
+                    captainRole = message.guild.roles.find(role => role.name === "NLTP Captains");
+                }
+                else if (message.channel.name === "admins") {
+                    adminRole = message.guild.roles.find(role => role.name === "Admin");
+                    captainRole = message.guild.roles.find(role => role.name === "Superadmin");
+                }
+            }
+            else if (message.channel.parent && client.config.customLoungeSections.indexOf(message.channel.parent.name) > -1 && message.channel.name.indexOf("general") === -1) {
+                adminRole = message.guild.roles.find(role => role.name === "Admin");
                 loungeSection = message.channel.parent;
                 sectionName = message.channel.parent.name;
                 captainRole = message.guild.roles.find(role => role.name === sectionName+" Captain");
             }
             else {
+                adminRole = message.guild.roles.find(role => role.name === "Admin");
                 loungeSection = message.guild.channels.find(channel => channel.name === "General Lounges");
                 sectionName = "General Lounges";
                 captainRole = message.guild.roles.find(role => role.name === "Moderator");
             }
-            // get admin role to add permissions
-            const adminRole = message.guild.roles.find(role => role.name === "Admin");
-            // get bot role to add permissions
-            const botRole = message.guild.roles.find(role => role.name === "Bots");
+                       
             // create the text channel with corresponding permissions
             message.guild.createChannel(("l-"+loungeName.replace(/ /g,"_").toLowerCase()), "text")
                 .then(channel => channel.setParent(loungeSection)) // set the channel in the General Lounges section
@@ -122,6 +141,11 @@ exports.run = async (client, message, args, level) => {
                     await sectionChannels.find(channel => channel.id === sectionChannelsKeys[j]).setPosition(j);
                 }
             });
+            if (sectionName === "Private") {
+                message.guild.channels.find(channel => channel.name === "L-"+loungeName).overwritePermissions(message.guild.defaultRole.id, {
+                    "VIEW_CHANNEL": false
+                });
+            }
             message.channel.send("L-"+loungeName+" was successfully created in the "+sectionName+" section!");
             // create a check to delete the channel if it remains empty after thirty seconds
             setTimeout(function(){

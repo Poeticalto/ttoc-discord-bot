@@ -6,7 +6,7 @@ module.exports = async (client, oldMember, newMember) => {
     // get the voice channels associated with oldMember and newMember
     let oldChannel = oldMember.voiceChannel;
     let newChannel = newMember.voiceChannel;
-    if (typeof oldChannel == 'undefined') { // user has connected to a voice channel
+    if (typeof oldChannel == 'undefined' && typeof newChannel !== 'undefined') { // user has connected to a voice channel
         // If user is in a voice lounge, give access to the corresponding text channel
         let newChannelName = newChannel.name;
         // check if parent is defined before checking if channel is in General Lounges section
@@ -17,7 +17,7 @@ module.exports = async (client, oldMember, newMember) => {
             });
         }
     }
-    else if (typeof newChannel == 'undefined') { // user has disconnected from a voice channel
+    else if (typeof newChannel == 'undefined' && typeof oldChannel !== 'undefined') { // user has disconnected from a voice channel
         // If user has disconnected from a voice lounge, remove access to the text channel and check if the voice lounge should be deleted
         let oldChannelName = oldChannel.name;
         // check if parent is defined before checking if channel is in General Lounges section
