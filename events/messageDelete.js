@@ -21,8 +21,8 @@ module.exports = async function(client, message) {
     // check the audit log for the deleted message
     const entry = await message.guild.fetchAuditLogs({type: 'MESSAGE_DELETE'}).then(audit => audit.entries.first());
     let user = "";
-    if (entry.extra.channel.id === message.channel.id
-        && (entry.target.id === message.author.id)
+    if (//entry.extra.channel.id === message.channel.id && 
+        (entry.target.id === message.author.id)
         && (entry.createdTimestamp > (Date.now() - 5000))
         && (entry.extra.count >= 1)) {
         // if the deleted message is in the audit log, then set the executor
