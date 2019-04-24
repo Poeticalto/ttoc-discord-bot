@@ -133,7 +133,7 @@ exports.run = async (client, message, args, level) => {
                 })})
                 .then(async function() {
                 if (sectionName === "Private") {
-                    message.guild.channels.find(channel => channel.name === "L-"+loungeName).overwritePermissions(message.guild.defaultRole, { VIEW_CHANNEL: false });
+                    message.guild.channels.find(channel => channel.name === "L-"+loungeName).overwritePermissions(message.guild.defaultRole.id, { VIEW_CHANNEL: false });
                 }
                 // sort voice channels by name
                 const sectionChannels = message.guild.channels.filter(channel => channel.parent !== null && channel.parent.name === sectionName && channel.type === "voice");
