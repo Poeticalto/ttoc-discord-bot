@@ -8,21 +8,13 @@ const Discord = require('discord.js');
 module.exports = async function(client, message) {
     // ignore if message was deleted in the trash channel or if a bot wrote the original message
     if (message.channel.name === client.config.trashChannel || message.author.bot) return;
-    // ignore if message was a command
-    if (message.guild) {
-        // test condition
-    }
-    else {
-        // ignore if message was not in a guild channel
-        return;
-    }
     // get the trash channel
     const logs = message.guild.channels.find(channel => channel.name === client.config.trashChannel);
     // check the audit log for the deleted message
     const entry = await message.guild.fetchAuditLogs({type: 'MESSAGE_DELETE'}).then(audit => audit.entries.first());
     let user = "";
-    if (//entry.extra.channel.id === message.channel.id && 
-        (entry.target.id === message.author.id)
+    if (entry.extra.channel.id === message.channel.id
+        && (entry.target.id === message.author.id)
         && (entry.createdTimestamp > (Date.now() - 5000))
         && (entry.extra.count >= 1)) {
         // if the deleted message is in the audit log, then set the executor
