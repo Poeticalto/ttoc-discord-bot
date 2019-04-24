@@ -8,6 +8,15 @@ const Discord = require('discord.js');
 module.exports = async function(client, message) {
     // ignore if message was deleted in the trash channel or if a bot wrote the original message
     if (message.channel.name === client.config.trashChannel || message.author.bot) return;
+    // ignore if message was a command
+    let settings;
+    if (message.guild) {
+        settings = message.settings = client.getSettings(message.guild.id);
+    }
+    else {
+        // ignore if message was not in a guild channel
+        return;
+    }
     // get the trash channel
     const logs = message.guild.channels.find(channel => channel.name === client.config.trashChannel);
     // check the audit log for the deleted message
