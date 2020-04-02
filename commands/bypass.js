@@ -16,17 +16,12 @@ exports.run = async (client, message, args, level) => {
         if (message.channel.permissionsFor(message.member).has("MANAGE_MESSAGES", true) === true) {
             // get the lounge name
             const loungeName = message.channel.topic;
-            // process permissions for tagged users
-            let resultsArr = "";
-            if (message.mentions.members.keyArray().length > 0) {
-                resultsArr += await message.mentions.members.map(async (member, index, members) => {return await processPermissions(member, message, loungeName)});
-            }
-            // process permissions for tagged roles
-            if (message.mentions.roles.keyArray().length > 0) {
-                resultsArr += await message.mentions.roles.map(async (role, index, roles) => {return await processPermissions(role, message, loungeName)});
-            }
+            // merge the mentioned members and roles into one (new) collection to process
+            const mergedSnowflakes = message.mentions.members.concat(message.mentions.roles);
+            // process the collection
+            const resultsArr = mergedSnowflakes.map((member, index, members) => {return processPermissions(member, message, loungeName)});
             // send results
-            return await message.channel.send("Successfully processed:\n"+resultsArr).catch(console.error);
+            return Promise.all(resultsArr).then(async (res) => await message.channel.send("Successfully processed:\n"+res.join("\n")).catch(console.error));
         }
         // notify member that they don't have permission
         return await message.channel.send("Sorry, you don't have permission to do that.").catch(console.error);

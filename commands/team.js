@@ -16,24 +16,20 @@ exports.run = async (client, message, args, level) => {
     if (!memberData && level <= 2) {
         return await message.channel.send("Sorry, you don't have permission to assign this team name.").catch(console.error);
     }
-    else {
-        let teamArr = [];
-        if (memberData) {
-            teamArr = memberData.teamlist.split(" ");
-        }
-        if ((teamArr.indexOf(abbrProcess.toUpperCase()) > -1 || level > 2) && message.mentions.members.keyArray().length > 0) {
-            let resultsArr = message.mentions.members.map(async (member, index, members) => {return await processRole(abbrProcess.toLowerCase(), member, message)});
-            return await message.channel.send("Successfully processed:\n"+resultsArr.join("\n")).catch(console.error);
-        }
-        else if (message.mentions.members.keyArray().length === 0) {
-            // tell user if member wasn't mentioned
-            return await message.channel.send("Sorry, I couldn't find a mentioned player. Remember to mention each player instead of typing names!").catch(console.error);
-        }
-        else {
-            // tell uesr if they don't have permission to use the command
-            return await message.channel.send("Sorry, you don't have permission to assign this team name.").catch(console.error);
-        }
+    let teamArr = [];
+    if (memberData) {
+        teamArr = memberData.teamlist.split(" ");
     }
+    if ((teamArr.indexOf(abbrProcess.toUpperCase()) > -1 || level > 2) && message.mentions.members.keyArray().length > 0) {
+        const resultsArr = message.mentions.members.map((member, index, members) => {return processRole(abbrProcess.toLowerCase(), member, message)});
+        return Promise.all(resultsArr).then(async (res) => await message.channel.send("Successfully processed:\n"+res.join("\n")).catch(console.error));
+    }
+    else if (message.mentions.members.keyArray().length === 0) {
+        // tell user if member wasn't mentioned
+        return await message.channel.send("Sorry, I couldn't find a mentioned player. Remember to mention each player instead of typing names!").catch(console.error);
+    }
+    // tell uesr if they don't have permission to use the command
+    return await message.channel.send("Sorry, you don't have permission to assign this team name.").catch(console.error);
 };
 
 exports.conf = {
@@ -60,17 +56,13 @@ async function processRole(abbrProcess, memberEdit, message) {
         await memberEdit.removeRole(roleToCheck).catch(console.error);
         return `removed ${abbrProcess} role for ${memberEdit.displayName}`;
     }
-    else {
-        if (roleToCheck !== null) {
-            if (someBallCheck !== null && memberEdit.roles.has(someBallCheck.id)) {
-                await memberEdit.removeRole(someBallCheck).catch(console.error);
-            }
-            // add role if member doesn't have role
-            await memberEdit.addRole(roleToCheck).catch(console.error);
-            return `added ${abbrProcess} role for ${memberEdit.displayName}`;
+    if (roleToCheck !== null) {
+        if (someBallCheck !== null && memberEdit.roles.has(someBallCheck.id)) {
+            await memberEdit.removeRole(someBallCheck).catch(console.error);
         }
-        else {
-            return `${abbrProcess} role doesn't exist!`;
-        }
+        // add role if member doesn't have role
+        await memberEdit.addRole(roleToCheck).catch(console.error);
+        return `added ${abbrProcess} role for ${memberEdit.displayName}`;
     }
+    return `${abbrProcess} role doesn't exist!`;
 }

@@ -19,16 +19,12 @@ exports.run = async (client, message, args, level) => {
             // get voice lounge name
             const loungeName = message.channel.topic;
             // process permissions for tagged users
-            let resultsArr = "";
-            if (message.mentions.members.keyArray().length > 0) {
-                resultsArr += await message.mentions.members.map(async (member, index, members) => {return await processPermissions(member, message, loungeName)});
-            }
-            // process permissions for tagged roles
-            if (message.mentions.roles.keyArray().length > 0) {
-                resultsArr += await message.mentions.roles.map(async (role, index, roles) => {return await processPermissions(role, message, loungeName)});
-            }
+            // merge the mentioned members and roles into one (new) collection to process
+            const mergedSnowflakes = message.mentions.members.concat(message.mentions.roles);
+            // process the collection
+            const resultsArr = mergedSnowflakes.map((member, index, members) => {return processPermissions(member, message, loungeName)});
             // send results
-            return await message.channel.send("Successfully processed:\n"+resultsArr).catch(console.error);
+            return Promise.all(resultsArr).then(async (res) => await message.channel.send("Successfully processed:\n"+res.join("\n")).catch(console.error));
         }
         // tell user they do not have admin permissions in the lounge
         return await message.channel.send("Sorry, you don't have permission to do that.").catch(console.error);
@@ -51,14 +47,14 @@ exports.help = {
     usage: "admin [@player/@role]"
 };
 
-async function processPermissions(memberEdit, message, loungeName) {
+function processPermissions(memberEdit, message, loungeName) {
     // check whether to add or remove admin permissions
     if (message.channel.permissionsFor(memberEdit).has("MANAGE_MESSAGES", true) === true) {
         // remove permissions for the voice lounge
-        await message.channel.overwritePermissions(memberEdit,{
+        message.channel.overwritePermissions(memberEdit,{
             "MANAGE_MESSAGES": false
         }).catch(console.error);
-        await message.guild.channels.find(channel => channel.name === loungeName).overwritePermissions(memberEdit, {
+        message.guild.channels.find(channel => channel.name === loungeName).overwritePermissions(memberEdit, {
             "MUTE_MEMBERS": false,
             "DEAFEN_MEMBERS": false,
             "MOVE_MEMBERS": false
@@ -69,10 +65,10 @@ async function processPermissions(memberEdit, message, loungeName) {
         return "Lounge Admin privileges successfully removed for "+memberEdit.name;
     }
     // add permissions for the voice lounge
-    await message.channel.overwritePermissions(memberEdit,{
+    message.channel.overwritePermissions(memberEdit,{
         "MANAGE_MESSAGES": true
     }).catch(console.error);
-    await message.guild.channels.find(channel => channel.name === loungeName).overwritePermissions(memberEdit, {
+    message.guild.channels.find(channel => channel.name === loungeName).overwritePermissions(memberEdit, {
         "MUTE_MEMBERS": true,
         "DEAFEN_MEMBERS": true,
         "MOVE_MEMBERS": true
