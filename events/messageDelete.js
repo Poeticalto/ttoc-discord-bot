@@ -1,7 +1,8 @@
-// The MESSAGEDELETE event runs every time a message gets deleted from a channel the bot can read
-// However, this will ignore messages that are made by or deleted by bots
-// Note that due to the binding of client to every event, every event
-// goes `client, other, args` when this function is run.
+/**
+* The MESSAGEDELETE event runs every time a message gets deleted from a channel the bot can read
+* @param {client} client - client object for the bot
+* @param {snowflake} message - message object for the message being processed
+*/
 
 const Discord = require('discord.js');
 
@@ -11,7 +12,7 @@ module.exports = async function(client, message) {
     // get the trash channel
     const logs = message.guild.channels.find(channel => channel.name === client.config.trashChannel);
     // check the audit log for the deleted message
-    const entry = await message.guild.fetchAuditLogs({type: 'MESSAGE_DELETE'}).then(audit => audit.entries.first());
+    const entry = await message.guild.fetchAuditLogs({type: 'MESSAGE_DELETE'}).then(audit => audit.entries.first()).catch(console.error);
     let user = "";
     if (entry.extra.channel.id === message.channel.id
         && (entry.target.id === message.author.id)
@@ -28,7 +29,7 @@ module.exports = async function(client, message) {
     if (user.bot) return;
     // if the trash channel does not exist, note it
     if (!logs) {
-        console.log("Trash channel not found!");
+        console.log("ERROR: Trash channel not found!");
     }
     else {
         // if the trash channel exists, send the message information
@@ -38,6 +39,6 @@ module.exports = async function(client, message) {
         .setDescription(`Original message: ${message.cleanContent}`)
         .setColor('BLUE')
         .setFooter(`Message deleted in ${message.channel.name}`);
-        logs.send(newEmbed);
+        await logs.send(newEmbed).catch(console.error);
     }
 }

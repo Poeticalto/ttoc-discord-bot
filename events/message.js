@@ -1,17 +1,18 @@
-// The MESSAGE event runs anytime a message is received
-// Note that due to the binding of client to every event, every event
-// goes `client, other, args` when this function is run.
+/**
+* The MESSAGE event runs anytime a message is received
+* @param {client} client - client object for the bot
+* @param {snowflake} message - message object for the message being processed
+*/
+
+const fs = require('fs');
 
 module.exports = async (client, message) => {
-    // It's good practice to ignore other bots. This also makes your bot ignore itself
-    // and not get into a spam loop (we call that "botception").
-    if (message.author.bot) return;
     // Grab the settings for this server from Enmap.
     // If there is no guild, get default conf (DMs)
     let settings;
     if (message.guild) {
         settings = message.settings = client.getSettings(message.guild.id);
-        if (message.channel.name === "highlights") {            
+        if (message.channel.name === client.config.highlightsChannel && !message.author.bot) {            
             if (client.config.whitelistHighlightLinks.some(url => message.content.includes(url))) {
                 await message.react("⭐");
                 await message.react("👍");
@@ -22,10 +23,23 @@ module.exports = async (client, message) => {
                 return message.author.send(`Sorry ${message.author.username}, your message was deleted from the highlights channel because a whitelisted link was not detected. Please use one of these sites or use the general chat for highlight discussion or to use bot commands:\n<https://www.gfycat.com/>\n<https://www.imgur.com/>\n<https://www.streamable.com/>\n<https://clips.twitch.tv/>\n\nIn case you need it, here are the contents of your deleted message: ${message.cleanContent}`);
             }
         }
+        else if (message.channel.name.substring(0,2) === "l-") {
+            let data = `${getTimeFromSnowflake(message.id)} ${message.member.displayName} (${message.author.id}) sent message: ${message.cleanContent}\n`;
+            let fileName = `${message.channel.name}.txt`;
+            fs.appendFile("./logs/lounges/"+fileName,data,'utf8',
+                function(err) {
+                    if (err) throw err;
+                });
+        }
     }
     else {
         settings = message.settings = client.config.defaultSettings;
     }
+    
+    // It's good practice to ignore other bots. This also makes your bot ignore itself
+    // and not get into a spam loop (we call that "botception").
+    if (message.author.bot) return;
+    
     // profanity checker for message
     if (client.checkProfanity(message.cleanContent) === true) {
         if (message.member) {
@@ -96,3 +110,16 @@ This command requires level ${client.levelCache[cmd.conf.permLevel]} (${cmd.conf
     client.logger.cmd(`[CMD] ${client.config.permLevels.find(l => l.level === level).name} ${message.author.username} (${message.author.id}) ran command ${cmd.help.name} with args ${args}`);
     cmd.run(client, message, args, level);
 };
+
+function getTimeFromSnowflake(id) {
+    let a = new Date((parseInt(id) / 4194304) +  1420070400000);
+    let months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    let year = a.getFullYear();
+    let month = months[a.getMonth()];
+    let date = a.getDate();
+    let hour = a.getHours();
+    let min = a.getMinutes();
+    let sec = a.getSeconds();
+    let time = `${month}/${date}/${year} ${hour}:${min}:${sec}`;
+    return time;
+}

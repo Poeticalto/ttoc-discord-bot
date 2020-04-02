@@ -1,5 +1,7 @@
-// The UPDATESTREAMS event is a user defined event which updates a channel with the list of twitch streams for a game (in this case TagPro)
-// This event is similar to the !streams command
+/**
+* The UPDATESTREAMS event is a user defined event which updates a channel with the list of twitch streams for a game (in this case TagPro)
+* @param {client} client - client object for the bot
+*/
 
 const Discord = require('discord.js');
 
@@ -61,7 +63,7 @@ module.exports = (client) => {
                 }
             })
                 .catch(function (error) {
-                console.log(error);
+                console.log("Error getting TagPro streams.");
             });
         }
         else {
