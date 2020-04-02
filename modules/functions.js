@@ -1,3 +1,7 @@
+const moment = require("moment");
+const badWords = require("bad-words");
+const badFilter = new badWords();
+
 module.exports = (client) => {
 
     /*
@@ -16,6 +20,21 @@ module.exports = (client) => {
             const currentLevel = permOrder.shift();
             if (message.guild && currentLevel.guildOnly) continue;
             if (currentLevel.check(message)) {
+                permlvl = currentLevel.level;
+                break;
+            }
+        }
+        return permlvl;
+    };
+    
+    client.mPermLevel = member => {
+        let permlvl = 0;
+
+        const permOrder = client.config.permLevels.slice(0).sort((p, c) => p.level < c.level ? 1 : -1);
+
+        while (permOrder.length) {
+            const currentLevel = permOrder.shift();
+            if (currentLevel.mcheck(member)) {
                 permlvl = currentLevel.level;
                 break;
             }
@@ -146,6 +165,37 @@ module.exports = (client) => {
 
     // `await client.wait(1000);` to "pause" for 1 second.
     client.wait = require("util").promisify(setTimeout);
+    
+    // return a new timestamp
+    client.getTime = () => {return moment().format()};
+    
+    // define UUID generator
+    client.newUUID = (state = true) => {
+        let dt = new Date().getTime();
+        let uuid;
+        if (state === true) {
+            uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            let r = (dt + Math.random()*16)%16 | 0;
+            dt = Math.floor(dt/16);
+            return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+            });
+        }
+        else {
+            uuid = 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            let r = (dt + Math.random()*16)%16 | 0;
+            dt = Math.floor(dt/16);
+            return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+            });
+        }
+        return uuid;
+    };
+    
+    // add bad words in the config to the bad words list    
+    badFilter.addWords(...client.config.addBadWords);
+    // remove bad words in the config from the bad words list
+    badFilter.removeWords(...client.config.removeBadWords);
+    // checkProfanity will check a string for any bad words
+    client.checkProfanity = (stringCheck) => {return badFilter.isProfane(stringCheck)};
 
     // These 2 process methods will catch exceptions and give *more details* about the error and stack trace.
     process.on("uncaughtException", (err) => {
