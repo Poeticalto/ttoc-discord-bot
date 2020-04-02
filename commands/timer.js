@@ -1,9 +1,11 @@
-// timer command sets a timer
+/**
+* The timer command sets a timer and displays the progress
+* @param {integer} time - the length of time the timer should run for
+*/
 
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
     // return if no arguments were provided
     let timerLength;
-    //if (!args || args.length < 1) return message.reply("\nSorry, you didn't provide enough arguments.\nTry this: !timer [seconds]");
     // get the timer length from args
     if (!args || args.length < 1) {
         timerLength = 10;
@@ -11,7 +13,6 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
     else {
         timerLength = args[0];
     }
-    //let [timerLength] = args.splice(0);
     // check if timerLength is an integer
     if (isNaN(timerLength) === false) {
         // round down timerLength to resolve decimals
@@ -57,7 +58,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                 // decrease the timer by 10 seconds
                 timerLength -= 10;
                 // send a message saying how many seconds are left
-                await message.channel.send(timerLength + " seconds left");
+                await message.channel.send(timerLength + " seconds left").catch(console.error);
                 if (timerLength <= 30) {
                     // if the timerLength is less than 30 seconds, move to 5 second intervals
                     clearInterval(timerPart0);
@@ -73,7 +74,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                 }
                 timerLength -= 5;
                 // send a message saying how many seconds are left
-                await message.channel.send(timerLength + " seconds left");
+                await message.channel.send(timerLength + " seconds left").catch(console.error);
                 if (timerLength <= 10) {
                     // if timerLength is less than 10 seconds, move to 1 second intervals
                     clearInterval(timerPart1);
@@ -89,7 +90,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                 }
                 timerLength -= 1;
                 // send a message saying how many seconds are left
-                await message.channel.send(timerLength + " seconds left");
+                await message.channel.send(timerLength + " seconds left").catch(console.error);
                 if (timerLength <= 1) {
                     // if timerLength is done, move to finalDisplay
                     clearInterval(timerPart2);
@@ -99,17 +100,17 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
             async function finalDisplay() {
                 // declare that timer is complete
-                await message.channel.send("Timer complete!");
+                await message.channel.send("Timer complete!").catch(console.error);
             }
         }
         else {
             // tell user to use a different number
-            message.channel.send("Sorry, a timer cannot be made using that number. Try using a number between 1 and 3600.");
+            await message.channel.send("Sorry, a timer cannot be made using that number. Try using a number between 1 and 600.").catch(console.error);
         }
     }
     else {
         // tell user to use an integer
-        message.channel.send("Sorry, your argument could not be recognized. Try using a number between 1 and 3600.");
+        await message.channel.send("Sorry, your argument could not be recognized. Try using a number between 1 and 600.").catch(console.error);
     }
 };
 

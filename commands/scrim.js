@@ -1,4 +1,6 @@
-// scrim command adds either a user or a team to the scrimlist
+/**
+* scrim command adds either a user or a team to the scrimlist
+*/
 
 exports.run = async (client, message, args, level) => {
     // scrimCheck checks if user/team is already on the scrim list
@@ -22,12 +24,12 @@ exports.run = async (client, message, args, level) => {
             };
             // write team data to db
             client.scrimList.setScrimPlayer.run(scrimCheck);
-            await message.channel.send(teamName + " added to scrim list!");
+            await message.channel.send(teamName + " added to scrim list!").catch(console.error);
         }
         else {
             // otherwise, remove the team from the scrimlist db
             client.scrimList.deleteScrimPlayer.run(message.channel.id);
-            await message.channel.send(teamName + " removed from scrim list!");
+            await message.channel.send(teamName + " removed from scrim list!").catch(console.error);
         }
         // update the scrimlist in the #looking-for-scrim channel
         updateScrimList(client, message.guild);
@@ -45,19 +47,19 @@ exports.run = async (client, message, args, level) => {
             };
             // write user data to db
             client.scrimList.setScrimPlayer.run(scrimCheck);
-            await message.channel.send(message.member.displayName + " added to scrim list!");
+            await message.channel.send(message.member.displayName + " added to scrim list!").catch(console.error);
         }
         else {
             // otherwise, remove the user from the scrimlist db
             client.scrimList.deleteScrimPlayer.run(message.member.id);
-            await message.channel.send(message.member.displayName + " removed from scrim list!");
+            await message.channel.send(message.member.displayName + " removed from scrim list!").catch(console.error);
         }
         // update the scrimlist in the #looking-for-scrim channel
         updateScrimList(client, message.guild);
     }
 };
 
-function updateScrimList(client, guild) {
+async function updateScrimList(client, guild) {
     // this function updates the scrim list in the #looking-for-scrim channel
     // get the full scrimlist
     const scrimListRaw = client.scrimList.getScrimList.all();
@@ -93,7 +95,7 @@ function updateScrimList(client, guild) {
     // get the #looking-for-scrim channel
     const scrimChannel = guild.channels.find(channel => channel.name === "looking-for-scrim");
     // change topic to the concatenated list
-    scrimChannel.setTopic("Available Players/Teams:" + leagueConcat);
+    await scrimChannel.setTopic("Available Players/Teams:" + leagueConcat).catch(console.error);
 }
 
 exports.conf = {

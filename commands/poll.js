@@ -1,17 +1,20 @@
-// poll command creates a poll using given arguments
+/**
+* Poll command creates a poll using the given arguments
+* @param {string} args - the arguments to add for the poll
+*/
 
 const Discord = require('discord.js');
 
 exports.run = async (client, message, args, level) => {
     if (!args || args.length < 1) { 
-        return message.channel.send("Sorry, I didn't detect any arguments.");
+        return await message.channel.send("Sorry, I didn't detect any arguments.").catch(console.error);
     }
     args = args.join(" ");
     args = args.split("|");
     if (args.length < 3) {
-        return message.channel.send("Sorry, I didn't detect enough arguments.");
+        return await message.channel.send("Sorry, I didn't detect enough arguments.").catch(console.error);
     }
-    message.delete();
+    await message.delete().catch(console.error);
     const exampleEmbed = new Discord.RichEmbed()
         .setColor('DARK_GOLD')
         .setTitle("Poll: "+args[0])        
@@ -26,9 +29,9 @@ exports.run = async (client, message, args, level) => {
     for (let i = 1; i < numOptions; i++) {
         exampleEmbed.addField("Option "+optionArr[i-1],args[i],false);
     }
-    let sentPoll = await message.channel.send(exampleEmbed);
+    let sentPoll = await message.channel.send(exampleEmbed).catch(console.error);
     for (let i = 1; i < numOptions; i++) {
-        await sentPoll.react(reactArr[i-1]);
+        await sentPoll.react(reactArr[i-1]).catch(console.error);
     }
 };
 

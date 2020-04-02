@@ -1,4 +1,7 @@
-// The dog command returns a picture of a dog inside a rich embed.
+/**
+* The dog command returns a picture of a dog inside a rich embed.
+*/
+
 const Discord = require('discord.js');
 const axios = require('axios');
 
@@ -7,7 +10,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
       baseURL: 'https://api.thedogapi.com/v1/images/search',
       timeout: 1000,
       headers: {'x-api-key': client.config.dogApiToken}
-    }).get().then(function (response) {
+    }).get().then(async function (response) {
         // title is used to describe the dog if the info is available.
         let title;
         if (response.data[0].breeds[0]) {
@@ -35,10 +38,10 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         .setImage(response.data[0].url)
         .setFooter('Retrieved using TheDogAPI');
         // send the dog
-        message.channel.send(exampleEmbed);
+        await message.channel.send(exampleEmbed).catch(console.error);
     })
-        .catch(function (error) {
-        message.channel.send("Sorry, there was an error getting your dog.");
+        .catch(async function (error) {
+        await message.channel.send("Sorry, there was an error getting your dog.").catch(console.error);
         console.log(error);
     });
 };

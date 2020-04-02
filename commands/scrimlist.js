@@ -1,9 +1,10 @@
-// scrimlist command returns an embed containing all teams/players who are available to scrim
+/**
+* The scrimlist command returns an embed containing all teams/players who are available to scrim
+*/
 
 const Discord = require("discord.js");
+
 exports.run = async (client, message, args, level) => {
-    // log command
-    client.logger.log(`(${message.member.id}) ${message.member.displayName} used command scrimlist with args ${args}`);
     // get the entire scrimlist
     const scrimListRaw = client.scrimList.getScrimList.all();
     // create an embed to fill in with teams
@@ -53,7 +54,7 @@ exports.run = async (client, message, args, level) => {
         }
     }
     // send the finished rich embed to the channel
-    message.channel.send(exampleEmbed);
+    await message.channel.send(exampleEmbed).catch(console.error);
 };
 
 exports.conf = {

@@ -1,12 +1,12 @@
-/*
-The HELP command is used to display every command's name and description
-to the user, so that he may see what commands are available. The help
-command is also filtered by level, so if a user does not have access to
-a command, it is not shown to them. If a command name is given with the
-help command, its extended help is shown.
+/**
+* The HELP command is used to display every command's name and description
+* to the user, so that he may see what commands are available. The help
+* command is also filtered by level, so if a user does not have access to
+* a command, it is not shown to them. If a command name is given with the
+* help command, its extended help is shown.
 */
 
-exports.run = (client, message, args, level) => {
+exports.run = async (client, message, args, level) => {
     // If no specific command is called, show all filtered commands.
     if (!args[0]) {
         // Filter all commands by which are available for the user's level, using the <Collection>.filter() method.
@@ -36,16 +36,16 @@ exports.run = (client, message, args, level) => {
             output += `${message.settings.prefix}${c.help.name}${" ".repeat(longest - c.help.name.length)} :: ${c.help.description}\n`;
         });
         if (message.guild) {
-            message.channel.send("Check your DMs for all of the commands you can use on this server!\nIf you want help for a specific command, do: ```!help command```");
+            await message.channel.send("Check your DMs for all of the commands you can use on this server!\nIf you want help for a specific command, do: ```!help command```").catch(console.error);
         }
-        message.author.send(output, {code: "asciidoc", split: { char: "\u200b" }});
+        await message.author.send(output, {code: "asciidoc", split: { char: "\u200b" }}).catch(console.error);
     } else {
         // Show individual command's help.
         let command = args[0];
         if (client.commands.has(command)) {
             command = client.commands.get(command);
             if (level < client.levelCache[command.conf.permLevel]) return;
-            message.channel.send(`= ${command.help.name} = \n${command.help.description}\nusage:: ${command.help.usage}\naliases:: ${command.conf.aliases.join(", ")}\n= ${command.help.name} =`, {code:"asciidoc"});
+            await message.channel.send(`= ${command.help.name} = \n${command.help.description}\nusage:: ${command.help.usage}\naliases:: ${command.conf.aliases.join(", ")}\n= ${command.help.name} =`, {code:"asciidoc"}).catch(console.error);
         }
     }
 };

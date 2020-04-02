@@ -1,25 +1,26 @@
-// react command converts a string into a message's reactions
-// the string supports letters and default emoticons
-// Note the limitations of discord reactions:
-// 1. Reactions cannot be repeated (meaning that each letter can only be used once)
-// 2. Each message is limited to twenty different reactions
+/**
+* React command converts a string into reactions for a message
+* The string supports letters and default emoticons
+* Two limitations of discord reactions: cannot repeat reactions and limit of 20 reactions per message
+* @param {snowflake} user/role - the user/role to add/remove bypass permissions for
+*/
 
 const emojiTree = require('emoji-tree');
 
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
     // return if no argument was given
-    if (!args || args.length < 1) return message.channel.send("\nSorry, you didn't provide enough arguments.\nTry this: !react [text]");
+    if (!args || args.length < 1) return await message.channel.send("\nSorry, you didn't provide enough arguments.\nTry this: !react [text]").catch(console.error);
     // concat args to get a string
     const reactionAdd = args.join("").toLowerCase();
     // split array by character to check for emoticons
     const splitArray = reactionAdd.split("");
     // get the pervious message to react to
-    message.channel.fetchMessages({limit: 2}).then(messages => {
+    await message.channel.fetchMessages({limit: 2}).then(async (messages) => {
         let lastID = messages.keyArray();
         // get previous message
-        message.channel.fetchMessage(lastID[1]).then(async function (messagea) {
+        await message.channel.fetchMessage(lastID[1]).then(async function (messagea) {
             // delete command message
-            message.delete();
+            await message.delete().catch(console.error);
             // check each character to see if it is an emoticon
             let parseArray = emojiTree(reactionAdd);
             // define counts for emojis and letters
@@ -54,8 +55,8 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                     return;
                 }
             }
-        });
-    });
+        }).catch(console.error);
+    }).catch(console.error);
 };
 
 function getUnicodeChar(getCharOf) {
@@ -90,39 +91,6 @@ function getUnicodeChar(getCharOf) {
     };
     return unicodeChars[getCharOf];
 }
-
-/*function getAltUnicodeChar(getCharOf) {
-    // return alternate emoji for letter
-    const altUnicodeChars = {
-        'a': '??',
-        'b': '??',
-        'c': '?',
-        'd': '??',
-        'e': '??',
-        'f': '??',
-        'g': '??',
-        'h': '??',
-        'i': '??',
-        'j': '??',
-        'k': '??',
-        'l': '??',
-        'm': '??',
-        'n': '?',
-        'o': '???',
-        'p': '??',
-        'q': '??',
-        'r': '??',
-        's': '??',
-        't': '??',
-        'u': '?',
-        'v': '??',
-        'w': '??',
-        'x': '?',
-        'y': '??',
-        'z': '??'
-    }
-    return altUnicodeChars[getCharOf];
-}*/
 
 exports.conf = {
     enabled: true,

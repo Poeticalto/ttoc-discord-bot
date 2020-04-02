@@ -1,4 +1,6 @@
-// lock command locks a voice lounge and prevents the everyone role from connecting
+/**
+* lock command locks a voice lounge and prevents the everyone role from connecting
+*/
 
 exports.run = async (client, message, args, level) => {
     // check that message was sent in a voice lounge
@@ -12,12 +14,12 @@ exports.run = async (client, message, args, level) => {
         }
         else {
             // tell user they do not have permission
-            message.channel.send("Sorry, you don't have permission to do that.");
+            return await message.channel.send("Sorry, you don't have permission to do that.").catch(console.error);
         }
     }
     else {
         // tell user they are in the wrong channel
-        message.channel.send("Sorry, you can't use that command here.");
+        return await message.channel.send("Sorry, you can't use that command here.").catch(console.error);
     }
 };
 
@@ -35,20 +37,18 @@ exports.help = {
     usage: "lock"
 };
 
-function processPermissions(memberEdit, message, loungeName) {
+async function processPermissions(memberEdit, message, loungeName) {
     // check if voice lounge is locked or not
     if (message.guild.channels.find(channel => channel.name === loungeName).permissionsFor(memberEdit).has("CONNECT", true) === true) {
         // if channel is not locked, lock the channel
-        message.guild.channels.find(channel => channel.name === loungeName).overwritePermissions(memberEdit, {
+        await message.guild.channels.find(channel => channel.name === loungeName).overwritePermissions(memberEdit, {
             "CONNECT": false
-        });
-        message.channel.send("Lounge successfully locked.");
+        }).catch(console.error);
+        return await message.channel.send("Lounge successfully locked.").catch(console.error);
     }
-    else {
-        // if channel is locked, unlock the channel
-        message.guild.channels.find(channel => channel.name === loungeName).overwritePermissions(memberEdit, {
-            "CONNECT": true
-        });
-        message.channel.send("Lounge successfully unlocked.");
-    }
+    // if channel is locked, unlock the channel
+    await message.guild.channels.find(channel => channel.name === loungeName).overwritePermissions(memberEdit, {
+        "CONNECT": true
+    }).catch(console.error);
+    return await message.channel.send("Lounge successfully unlocked.").catch(console.error);
 }

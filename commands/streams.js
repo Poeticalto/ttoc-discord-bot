@@ -1,4 +1,6 @@
-// streams command returns an embed with all active streams for a specific game
+/**
+* The streams command returns an embed containing all Twitch streams of a specific game (TagPro)
+*/
 
 const Discord = require('discord.js');
 
@@ -6,9 +8,9 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
     // get axios request for TagPro (see Twitch APIs if you
     // need to get the id for a different game)
     client.getStreams.get('?game_id=313418')
-        .then(function (response) {
+        .then(async function (response) {
         // delete the command message
-        message.delete().catch(console.error);
+        await message.delete().catch(console.error);
         // create an embed to fill in the streams
         const exampleEmbed = new Discord.RichEmbed()
         .setTitle('Here is the current list of TagPro streams on Twitch:')
@@ -29,11 +31,11 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             // if there aren't any streams, add a field saying no streams
             exampleEmbed.addField('No TagPro streams found :c', 'Try making your own stream!', false);
         }
-        message.channel.send(exampleEmbed);
+        await message.channel.send(exampleEmbed).catch(console.error);
     })
-        .catch(function (error) {
-        message.channel.send("Sorry, there was an error getting the stream list.");
-        console.log(error);
+        .catch(async function (error) {
+            await message.channel.send("Sorry, there was an error getting the stream list.").catch(console.error);
+            console.log(error);
     });
 };
 

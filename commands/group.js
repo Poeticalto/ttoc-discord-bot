@@ -1,27 +1,29 @@
-// group command returns a tagpro group on a specified server.
+/**
+* The group command returns a tagpro group for the specified server
+* @param {string} server - the server to get the tagpro group from
+*/
 
 const request = require("request");
-const tpServers = ["test"];
-const maptestServers = ["maptest", "maptest2", "maptest3"];
+const maptestServers = ["maptest", "maptest2"];
 
 exports.run = async (client, message, args, level) => {
     // define server
 	let server;
     if (!args || args.length < 1){
         // if no server was given, use the default server
-		server = "test";
+		server = "tagpro";
     }
     else {
 		// otherwise, parse argument
         let [serverProcess] = args.splice(0);
 		// check if argument matches a server in the server list
-        if (tpServers.indexOf(serverProcess.toLowerCase()) > -1) {
+        if (maptestServers.indexOf(serverProcess.toLowerCase()) > -1) {
             // if so, assign server
 			server = serverProcess.toLowerCase();
         }
         else {
 			// otherwise, use the default server
-            server = "test";
+            server = "tagpro";
         }
     }
 	// define links to build groups
@@ -31,10 +33,11 @@ exports.run = async (client, message, args, level) => {
 		// maptest servers use a different link than production servers
         groupBuild = 'http://' + server + '.newcompte.fr/groups/create';
         groupSend = 'http://' + server + '.newcompte.fr/groups/';
-    } else if (tpServers.indexOf(server) > -1) {
+    }
+    else {
 		// define group builder for production servers
-        groupBuild = 'http://tagpro-' + server + '.koalabeast.com/groups/create';
-        groupSend = 'http://tagpro-' + server + '.koalabeast.com/groups/';
+        groupBuild = 'https://tagpro.koalabeast.com/groups/create';
+        groupSend = 'https://tagpro.koalabeast.com/groups/';
     }
 	// create request to get new group
 	// note that follow_redirects is important here because if
@@ -47,13 +50,13 @@ exports.run = async (client, message, args, level) => {
             'follow_redirects': 'false',
             'body': JSON.stringify({ public: "off" })
         }]
-    }, function(error, response, body) {
+    }, async function(error, response, body) {
 		// return error to user if group cannot be created
         if (response != null) {
             let groupId = body.split("/groups/")[body.split("/groups/").length - 1];
-            message.channel.send("Here is your " + server + " group: <" + groupSend + groupId + ">");
+            await message.channel.send("Here is your group: <" + groupSend + groupId + ">").catch(console.error);
         } else {
-            message.channel.send("There was an issue getting your group. Please try again.");
+            await message.channel.send("There was an issue getting your group. Please try again.").catch(console.error);
         }
     });
 };

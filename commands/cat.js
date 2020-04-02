@@ -1,4 +1,7 @@
-// The cat command returns a picture of a cat inside a rich embed.
+/**
+* The cat command returns a picture of a cat inside a rich embed.
+*/
+
 const Discord = require('discord.js');
 const axios = require('axios');
 
@@ -7,7 +10,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
       baseURL: 'https://api.thecatapi.com/v1/images/search',
       timeout: 1000,
       headers: {'x-api-key': client.config.catApiToken}
-    }).get().then(function (response) {
+    }).get().then(async function (response) {
         // create an embed to send the cat
         const exampleEmbed = new Discord.RichEmbed()
         .setTitle('A random cat appeared!')
@@ -15,10 +18,10 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         .setImage(response.data[0].url)
         .setFooter('Retrieved using TheCatAPI');
         // send the cat
-        message.channel.send(exampleEmbed);
+        await message.channel.send(exampleEmbed).catch(console.error);
     })
-        .catch(function (error) {
-        message.channel.send("Sorry, there was an error getting your cat.");
+        .catch(async function (error) {
+        await message.channel.send("Sorry, there was an error getting your cat.").catch(console.error);
         console.log(error);
     });
 };

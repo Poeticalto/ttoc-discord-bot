@@ -1,15 +1,17 @@
-// The nta command gives or removes nta role on the server
+/**
+* Add or remove the NTA role on the server
+*/
 
-exports.run = (client, message, args, level) => {
+exports.run = async (client, message, args, level) => {
     let memberEdit = message.member;
     const roleToCheck = message.guild.roles.find(role => role.name === "NTA");
     if (memberEdit.roles.has(roleToCheck.id)) {
-        memberEdit.removeRole(roleToCheck).catch(console.error);
-        message.channel.send("Success! You will receive push notifications for tournaments from this server when you're online!");
+        await memberEdit.removeRole(roleToCheck).catch(console.error);
+        await message.channel.send("Success! You will receive push notifications for tournaments from this server when you're online!").catch(console.error);
     }
     else {
-        memberEdit.addRole(roleToCheck).catch(console.error);
-        message.channel.send("Success! You won't receive push notifications for tournaments from this server when you're online!");
+        await memberEdit.addRole(roleToCheck).catch(console.error);
+        await message.channel.send("Success! You won't receive push notifications for tournaments from this server when you're online!").catch(console.error);
     }
 };
 
