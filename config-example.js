@@ -25,65 +25,68 @@ const config = {
     // Your Bot's Twitch Token. Available at https://dev.twitch.tv/docs/authentication/#registration
     "twitchToken": "BOT TWITCH TOKEN",
 
-    // Settings for Rainbow roles, make sure the bot role is above the rainbow role on the server.
-    "rainbowColorsNum": 24,
-    "rainbowColorsSpeed": 1000, // Do not use a number higher than 1000
-
+    // API Token for TheCatAPI. Available at https://thecatapi.com/signup
+    "catApiToken": "token_here",
+    // API Token for TheDogAPI. Available at https://thedogapi.com/signup
+    "dogApiToken": "token_here",
+    // whitelisted websites used for the highlights channel on the server
+    "whitelistHighlightLinks": ["gfycat.com","imgur.com","streamable.com","clips.twitch.tv"],
+    // spreadsheet to get stuff from 
+    "spreadsheetId": "id_here",
+    // ID for Google Apps Script to run stuff from
+    "appScriptToken": "token_here",
+    // API Token for Tenor. Available at https://tenor.com/developer/keyregistration
+    "tenorToken": "token_here",
     // Settings for bad words that are checked by the bot. Add or delete as needed.
     "addBadWords": ["creo"],
     "removeBadWords": ["god"],
 
-    // spreadsheetId is the Google Sheet to communicate with for tournament running.
-    "spreadsheetId": "SPREADSHEET ID",
-
-    // The following are the parts of the form builder used to submit responses for tournament running.
-    // Form link is the first part, replace ID
-    "tournamentFormLink": "https://docs.google.com/forms/d/e/FORM_ID_HERE/formResponse?",
-    // The rest are the IDs for each question asked on the form. They should follow the format entry.1234567890
-    // Name is the name of the player
-    "tournamentFormName": "entry.NUMBER",
-    // Pos is the position of the player
-    "tournamentFormPos": "entry.NUMBER",
-    // Mic is whether or not the player has a mic to use
-    "tournamentFormMic": "entry.NUMBER",
-    // Ping is what ping the player has to the server
-    "tournamentFormPing": "entry.NUMBER",
-    // Cap is whether or not the player is signing up as a captain
-    "tournamentFormCap": "entry.NUMBER",
-    // form type is whether the player being submmitted is being added, edited, or removed
-    "tournamentFormType": "entry.NUMBER",
-
-    // permList is used to define roles which can assign team abbreviations starting with a certain letter.
-    "permList": {
-        "M": ["MLTP Captain"],
-        "A": ["NLTP Captain"],
-        "T": ["NFTL Captain"],
-        "E": ["ELTP Captain"],
-        "O": ["OLTP Captain"],
-    },
-    // teamList defines the team roles which each role above can assign.
-    "teamList": {
-        "M": ["MGGB"],
-        "A": ["AICP"],
-        "T": ["TRSP"],
-        "E": [],
-        "O": []
-    },
     // leagueList defines the league roles which can be added
-    "leagueList": ["MLTP", "NLTP", "ELTP", "OLTP", "NFTL"],
+    "leagueList": ["MLTP", "NLTP", "ELTP", "OLTP", "NFTL", "Retired"],
     // trashChannel is the channel where deleted messages are sent.
     "trashChannel": "name of trash channel",
+    // welcomeChannel is the welcome channel
     "welcomeChannel": "name of welcome channel",
+    // highlightsChannel is the channel where highlights are posted
+    "highlightsChannel": "name of highlights channel",
+    // customLoungeSections allows for lounges outside of general lounges section
+    "customLoungeSections": ["MLTP","NLTP"],
+    // privateLoungeSections allows for private lounges to be created
+    "privateLoungeSections": ["channel name"],
+    // gAppKey is the key from google OAuth
+    "gAppKey": {"installed":{"client_id":"client_id_here","project_id":"project_id_here","auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://oauth2.googleapis.com/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs","client_secret":"client_secret_here","redirect_uris":["http://localhost"]}},
+    // gAppToken is the token from google OAuth
+    "gAppToken": {"access_token":"access_token_here","refresh_token":"refresh_token_here","scope":"https://www.googleapis.com/auth/script.scriptapp https://www.googleapis.com/auth/script.container.ui https://www.googleapis.com/auth/forms https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/script.external_request https://www.googleapis.com/auth/script.projects","token_type":"Bearer","expiry_date":0},
 
     // PERMISSION LEVEL DEFINITIONS.
-
+    // check will check based on a message, while mcheck checks based on the user. Both of these are used for different purposes in the bot.
     permLevels: [
         // This is the lowest permisison level, this is for non-roled users.
         { level: 0,
-         name: "User",
+         name: "User", 
          // Don't bother checking, just return true which allows them to execute any command their
          // level allows them to.
-         check: () => true
+         check: () => true,
+         mcheck: () => true
+        },
+        { level: 1,
+        name: "Verified",
+        check: (message) => {
+             try {
+                 if (message.member.roles.some(r=>["MLTP", "NLTP", "ELTP", "OLTP", "NFTL", "Retired", "None"].includes(r.name))) return true;
+                 else return false;
+             } catch (e) {
+                 return false;
+             }
+         },
+         mcheck: (member) => {
+             try {
+                 if (member.roles.some(r=>["MLTP", "NLTP", "ELTP", "OLTP", "NFTL", "Retired", "None"].includes(r.name))) return true;
+                 else return false;
+             }catch (e) {
+                 return false;
+             }
+         }
         },
 
         // This is your permission level, the staff levels should always be above the rest of the roles.
@@ -96,21 +99,35 @@ const config = {
          // If they don't then return false, which will prevent them from executing the command.
          check: (message) => {
              try {
-                 // Moderator is given if the member has any of the following roles
-                 if (message.member.roles.some(r=>["MLTP Captain", "NLTP Captain", "NFTL Captain", "Moderator"].includes(r.name))) return true;
+                 if (message.member.roles.some(r=>["MLTP Captain", "Minors Captain", "NLTP Captain", "NFTL Captain","Tournament Runners"].includes(r.name))) return true;
                  else return false;
              } catch (e) {
+                 return false;
+             }
+         },
+         mcheck: (member) => {
+             try {
+                 if (member.roles.some(r=>["MLTP Captain", "Minors Captain", "NLTP Captain", "NFTL Captain","Tournament Runners"].includes(r.name))) return true;
+                 else return false;
+             }catch (e) {
                  return false;
              }
          }
         },
 
         { level: 3,
-         name: "Administrator",
+         name: "Administrator", 
          check: (message) => {
              try {
-                 // member is given administrator if they have any of the following roles
-                 if (message.member.roles.some(r=>["Admin", "MLTP CRC", "NLTP CRC"].includes(r.name))) return true;
+                 if (message.member.roles.some(r=>["Admin", "MLTP CRC", "NLTP CRC","Bots"].includes(r.name))) return true;
+                 else return false;
+             } catch (e) {
+                 return false;
+             }
+         },
+         mcheck: (member) => {
+             try {
+                 if (member.roles.some(r=>["Admin", "MLTP CRC", "NLTP CRC","Bots"].includes(r.name))) return true;
                  else return false;
              } catch (e) {
                  return false;
@@ -119,10 +136,11 @@ const config = {
         },
         // This is the server owner.
         { level: 4,
-         name: "Server Owner",
+         name: "Server Owner", 
          // Simple check, if the guild owner id matches the message author's ID, then it will return true.
          // Otherwise it will return false.
-         check: (message) => message.channel.type === "text" ? (message.guild.ownerID === message.author.id ? true : false) : false
+         check: (message) => message.channel.type === "text" ? (message.guild.ownerID === message.author.id ? true : false) : false,
+         mcheck: (member) => member.guild.ownerID === member.user.id ? true : false
         },
 
         // Bot Support is a special inbetween level that has the equivalent of server owner access
@@ -131,22 +149,25 @@ const config = {
          name: "Bot Support",
          // The check is by reading if an ID is part of this array. Yes, this means you need to
          // change this and reboot the bot to add a support user. Make it better yourself!
-         check: (message) => config.support.includes(message.author.id)
+         check: (message) => config.support.includes(message.author.id),
+         mcheck: (member) => config.support.includes(member.user.id)
         },
 
         // Bot Admin has some limited access like rebooting the bot or reloading commands.
         { level: 9,
          name: "Bot Admin",
-         check: (message) => config.admins.includes(message.author.id)
+         check: (message) => config.admins.includes(message.author.id),
+         mcheck: (member) => config.admins.includes(member.user.id)
         },
 
         // This is the bot owner, this should be the highest permission level available.
         // The reason this should be the highest level is because of dangerous commands such as eval
         // or exec (if the owner has that).
         { level: 10,
-         name: "Bot Owner",
+         name: "Bot Owner", 
          // Another simple check, compares the message author id to the one stored in the config file.
-         check: (message) => message.client.config.ownerID === message.author.id
+         check: (message) => message.client.config.ownerID === message.author.id,
+         mcheck: () => false
         }
     ]
 };

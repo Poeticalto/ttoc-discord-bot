@@ -68,3 +68,5 @@ data/
 sandbox.js
 commands/test.js
 cats.json
+logs/
+music/
