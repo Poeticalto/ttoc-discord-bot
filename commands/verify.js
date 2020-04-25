@@ -25,9 +25,11 @@ exports.run = async (client, message, args, level) => {
                 await message.author.send("Your profile has been queued for a name update. I'll send you a message once it has been successfully updated!").catch(console.error);
             }
             else if (reaction.emoji.name === '🇧') {
-                user.vstatus = 0;
+                // temp remove until tweaks to removing system can be made
+                /*user.vstatus = 0;
                 user.tagproid = "WRIG is the coolest guy ever";
-                await message.author.send("Your verification data has been reset. Please type `!verify ID` here with your new profile to run verification on it.").catch(console.error);
+                await message.author.send("Your verification data has been reset. Please type `!verify ID` here with your new profile to run verification on it.").catch(console.error);*/
+                await message.author.send("Please contact an admin to assist you with removing your current profile and verifying a new profile.").catch(console.error);
             }
             client.usersDB.setUser.run(user);
         })
