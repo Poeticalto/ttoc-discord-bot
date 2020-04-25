@@ -20,7 +20,6 @@ module.exports = async (client) => {
     setInterval(function(){ client.emit("updateStreams"); }, 60000);
     setInterval(function(){ 
         client.emit("verifyCheck");
-        client.emit("scoresUpdate");
     }, 30000);
     let resetScrimList = schedule.scheduleJob('0 0 5 * * *', function(){
         // clear scrim list at 5 AM local time

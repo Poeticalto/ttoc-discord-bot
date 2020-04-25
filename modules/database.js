@@ -1,6 +1,3 @@
-const {google} = require("googleapis");
-const SCOPES = ['https://www.googleapis.com/auth/script.projects', 'https://www.googleapis.com/auth/forms', 'https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/script.scriptapp', 'https://www.googleapis.com/auth/script.container.ui', 'https://www.googleapis.com/auth/script.external_request'];
-
 const Database = require("better-sqlite3");
 let db = new Database("./data/botdatabase.db");
 
@@ -257,75 +254,6 @@ INSERT INTO botstatus(id, status) VALUES ("databasecheck", 1);
                             }
                         }
                     }
-                }
-            });
-        }
-    };
-    
-    const gAppKey = client.config.gAppKey;
-    const gAppToken = client.config.gAppToken;
-    const {client_secret, client_id, redirect_uris} = gAppKey.installed;
-    const tempoAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
-    tempoAuth2Client.setCredentials(gAppToken);
-    
-    client.gApps = {
-        "oAuth2Client": tempoAuth2Client,
-        "callAppsScript": function (funcName, client, auth) {
-            const scriptId = client.config.appScriptToken;
-            const script = google.script({version: 'v1', auth});
-            let response;
-            // Make the API request. The request object is included here as 'resource'.
-            script.scripts.run({
-                resource: {
-                    function: funcName,
-                },
-                scriptId: scriptId,
-            }, function (err, resp) {
-                if (err) {
-                    // The API encountered a problem before the script started executing.
-                    response = 'The API returned an error: ' + err;
-                }
-                if (resp.error) {
-                    // The API executed, but the script returned an error.
-                    // Extract the first (and only) set of error details. The values of this
-                    // object are the script's 'errorMessage' and 'errorType', and an array
-                    // of stack trace elements.
-                    const error = resp.error.details[0];
-                    response = 'Script error message: ' + error.errorMessage;
-                } else {
-                    // The structure of the result will depend upon what the Apps Script
-                    // function returns. Here, the function returns an Apps Script Object
-                    // with String keys and values, and so the result is treated as a
-                    // Node.js object (folderSet).
-                    response = resp.data.response.result;
-                    let writeStatus = {
-                        "id": funcName,
-                        "status": JSON.stringify(response)
-                    };
-                    // define custom overwrite
-                    if (funcName === "updateSignups") {
-                        writeStatus.id = "DraftBoardSetup";
-                    }
-                    client.botText.setTextStatus.run(writeStatus);
-                }
-            });
-        },
-        "getSheetsData": function (sheetID, sheetRange, client, auth) {
-            const sheets = google.sheets({version: 'v4', auth});
-            sheets.spreadsheets.values.get({
-                spreadsheetId: sheetID,
-                range: sheetRange,
-            }, (err, res) => {
-                if (err) return console.log('The API returned an error: ' + err);
-                const rows = res.data.values;
-                if (rows.length) {
-                    let writeStatus = {
-                        "id": sheetID+sheetRange,
-                        "status": JSON.stringify(rows)
-                    };
-                    client.botText.setTextStatus.run(writeStatus);
-                } else {
-                    console.log('No data found.');
                 }
             });
         }

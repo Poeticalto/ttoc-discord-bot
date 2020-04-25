@@ -23,19 +23,20 @@ const config = {
     },
 
     // Your Bot's Twitch Token. Available at https://dev.twitch.tv/docs/authentication/#registration
+    // twitch token used for retrieving twitch streams in !streams command and updateStreams event
     "twitchToken": "BOT TWITCH TOKEN",
 
     // API Token for TheCatAPI. Available at https://thecatapi.com/signup
+    // catApiToken used in !cat command
     "catApiToken": "token_here",
     // API Token for TheDogAPI. Available at https://thedogapi.com/signup
+    // dogApiToken used in !dog command
     "dogApiToken": "token_here",
     // whitelisted websites used for the highlights channel on the server
+    // check message event for how highlights channel is set up
     "whitelistHighlightLinks": ["gfycat.com","imgur.com","streamable.com","clips.twitch.tv"],
-    // spreadsheet to get stuff from 
-    "spreadsheetId": "id_here",
-    // ID for Google Apps Script to run stuff from
-    "appScriptToken": "token_here",
     // API Token for Tenor. Available at https://tenor.com/developer/keyregistration
+    // tenorToken used in !gif command
     "tenorToken": "token_here",
     // Settings for bad words that are checked by the bot. Add or delete as needed.
     "addBadWords": ["creo"],
@@ -53,10 +54,6 @@ const config = {
     "customLoungeSections": ["MLTP","NLTP"],
     // privateLoungeSections allows for private lounges to be created
     "privateLoungeSections": ["channel name"],
-    // gAppKey is the key from google OAuth
-    "gAppKey": {"installed":{"client_id":"client_id_here","project_id":"project_id_here","auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://oauth2.googleapis.com/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs","client_secret":"client_secret_here","redirect_uris":["http://localhost"]}},
-    // gAppToken is the token from google OAuth
-    "gAppToken": {"access_token":"access_token_here","refresh_token":"refresh_token_here","scope":"https://www.googleapis.com/auth/script.scriptapp https://www.googleapis.com/auth/script.container.ui https://www.googleapis.com/auth/forms https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/script.external_request https://www.googleapis.com/auth/script.projects","token_type":"Bearer","expiry_date":0},
 
     // PERMISSION LEVEL DEFINITIONS.
     // check will check based on a message, while mcheck checks based on the user. Both of these are used for different purposes in the bot.
