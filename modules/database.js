@@ -93,6 +93,15 @@ q9 TEXT,
 q10 TEXT,
 isregistered TEXT
 );
+CREATE TABLE users (
+discordid TEXT PRIMARY KEY,
+tagproid TEXT,
+tagproname TEXT,
+oldroles TEXT,
+verifyname TEXT,
+vstatus INTEGER,
+vcount INTEGER
+);
 INSERT INTO botstatus(id, status) VALUES ("databasecheck", 1);
 `;
         db.exec(sqlInit);
