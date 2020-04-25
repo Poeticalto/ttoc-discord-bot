@@ -43,11 +43,12 @@ exports.run = async (client, message, args, level) => {
         discordid: message.mentions.users.first().id,
         tagproid: tempID,
         tagproname: "WRIGISTHEBEST",
+        oldroles: "",
         verifyname: "I<3WRIG",
         vstatus: 226078,
         vcount: 0
     };
-    client.usersDB.updateUser.run(user);
+    client.usersDB.setUser.run(user);
     return await message.channel.send(`Profile ${tempID} has been attached to ${message.mentions.users.first()} and is currently queued for a name update.`).catch(console.error);
 };
 

@@ -8,7 +8,95 @@ const schedule = require("node-schedule");
 const axios = require("axios");
 const EventSource = require('eventsource');
 
-module.exports = (client) => {    
+module.exports = (client) => {
+    let stmt = db.prepare(`SELECT *
+FROM sqlite_master
+WHERE
+type='table' and name='botstatus'
+;`);
+    let row = stmt.get();
+    if(row === undefined){
+        console.log("WARNING: database appears empty; initializing it.");
+        const sqlInit = `
+CREATE TABLE lounges (
+id TEXT PRIMARY KEY,
+adminid TEXT
+);
+CREATE TABLE scrimlist (
+id TEXT PRIMARY KEY,
+name TEXT,
+nametype TEXT
+);
+CREATE TABLE botstatus (
+id TEXT PRIMARY KEY,
+status INTEGER
+);
+CREATE TABLE bottext (
+id TEXT PRIMARY KEY,
+status TEXT
+);
+CREATE TABLE teamperms (
+id TEXT PRIMARY KEY,
+teamlist TEXT
+);
+CREATE TABLE blacklist (
+id TEXT PRIMARY KEY
+);
+CREATE TABLE flairs (
+id TEXT PRIMARY KEY,
+flair TEXT,
+flairtype TEXT,
+reason TEXT,
+time TEXT,
+username TEXT,
+userid TEXT
+);
+CREATE TABLE naltp (
+discordid TEXT PRIMARY KEY,
+tagproid TEXT,
+tagproname TEXT,
+oldname TEXT,
+mic TEXT,
+tpposition TEXT,
+playingfrom TEXT,
+homeserver TEXT,
+comfortservers TEXT,
+atlping INTEGER,
+chiping INTEGER,
+dalping INTEGER,
+laping INTEGER,
+miaping INTEGER,
+nycping INTEGER,
+sfping INTEGER,
+seaping INTEGER,
+torping INTEGER,
+availdays TEXT,
+availhours TEXT,
+availcomment TEXT,
+gencomment TEXT,
+isregistered INTEGER,
+islocked INTEGER
+);
+CREATE TABLE naltpcaptain (
+discordid TEXT PRIMARY KEY,
+tagproid TEXT, 
+tagproname TEXT,
+q1 TEXT,
+q2 TEXT,
+q3 TEXT,
+q4 TEXT,
+q5 TEXT,
+q6 TEXT,
+q7 TEXT,
+q8 TEXT,
+q9 TEXT,
+q10 TEXT,
+isregistered TEXT
+);
+INSERT INTO botstatus(id, status) VALUES ("databasecheck", 1);
+`;
+        db.exec(sqlInit);
+    }
     // define all of the lounge functions
     client.lounges = {
         "getLoungeAdmin": db.prepare("SELECT * FROM lounges WHERE id = ?;"),
@@ -125,7 +213,7 @@ module.exports = (client) => {
         "getUserByTagProName": db.prepare("SELECT * FROM users WHERE tagproname = ? COLLATE NOCASE;"),
         "getUsersByStatus": db.prepare("SELECT * FROM users WHERE vstatus = ?;"),
         "getManualUsers": db.prepare("SELECT * FROM users WHERE vcount = 217253;"),
-        "updateUser": db.prepare("INSERT OR REPLACE INTO users (discordid, tagproid, tagproname, verifyname, vstatus, vcount) VALUES (@discordid, @tagproid, @tagproname, @verifyname, @vstatus, @vcount);")
+        "setUser": db.prepare("INSERT OR REPLACE INTO users (discordid, tagproid, tagproname, oldroles, verifyname, vstatus, vcount) VALUES (@discordid, @tagproid, @tagproname, @oldroles, @verifyname, @vstatus, @vcount);")
     };
     
     client.flairDB = {

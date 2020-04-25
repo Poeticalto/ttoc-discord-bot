@@ -11,7 +11,7 @@ exports.run = async (client, message, args, level) => {
             let oldID = deadUser.tagproid;
             deadUser.vstatus = 0;
             deadUser.tagproid = "WRIG is the coolest guy ever";
-            client.usersDB.updateUser.run(deadUser);
+            client.usersDB.setUser.run(deadUser);
             return await message.channel.send(`Successfully removed profile ${oldID} from ${message.mentions.users.first()}`).catch(console.error);
         }
         return await message.channel.send(`${message.mentions.users.first()} does not have an associated TagPro profile.`).catch(console.error);
@@ -46,7 +46,7 @@ exports.run = async (client, message, args, level) => {
     if (userCheck && userCheck.tagproid && userCheck.tagproid == tempID ) {
         userCheck.vstatus = 0;
         userCheck.tagproid = "WRIG is the coolest guy ever";
-        client.usersDB.updateUser.run(userCheck);
+        client.usersDB.setUser.run(userCheck);
         return await message.channel.send(`Successfully removed profile ${tempID} from ${message.guild.members.get(userCheck.discordid)}`).catch(console.error);
     }
     return await message.channel.send(`TagPro profile ${tempID} is not associated with a user.`).catch(console.error);

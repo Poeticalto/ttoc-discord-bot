@@ -29,7 +29,7 @@ exports.run = async (client, message, args, level) => {
                 user.tagproid = "WRIG is the coolest guy ever";
                 await message.author.send("Your verification data has been reset. Please type `!verify ID` here with your new profile to run verification on it.").catch(console.error);
             }
-            client.usersDB.updateUser.run(user);
+            client.usersDB.setUser.run(user);
         })
         .catch(async (collected) => {
             await message.author.send("Sorry, I did not detect a response and you have timed out. Whenever you are ready, please do `!verify` again.").catch(console.error);
@@ -70,11 +70,12 @@ exports.run = async (client, message, args, level) => {
         discordid: message.author.id,
         tagproid: tempID,
         tagproname: "WRIGISTHEBEST",
+        oldroles: "",
         verifyname: "I<3WRIG",
         vstatus: 1,
         vcount: 0
     };
-    client.usersDB.updateUser.run(user);
+    client.usersDB.setUser.run(user);
     return await message.author.send("Your ID has been successfully saved as: `" + tempID + "`. If this is an error, please use `!verify` again with your correct ID. You have been added to the queue for verification with the TagPro server. This process is purposefully rate limited to ensure I don't get blocked, so please be patient. c: I'll send a message soon about what to do next!").catch(console.error);
 };
 
