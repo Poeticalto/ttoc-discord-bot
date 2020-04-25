@@ -1,5 +1,5 @@
 /**
-* The guildMemberAdd event runs anytime a user joins a guild and checks wheter user is properly verified with the bot
+* The guildMemberAdd event runs anytime a user joins a guild and checks whether user is properly verified with the bot
 * @param {client} client - client object for the bot
 * @param {snowflake} member - member object for user that just joined the guild
 */
@@ -48,5 +48,13 @@ module.exports = async (client, member) => {
         return await member.user.send("Welcome back to the " + member.guild.name + " Discord, " + member + "!\nYour profile was previously successfully verified but required manual approval due to not meeting certain age requirements for automatic admissision. Don't worry, an admin will contact you shortly to help with manual admission.").catch(console.error);
     }
     // user successfully verified before, so welcome the user again
-    return await member.user.send(`Howdy ${member}, welcome back to the ${member.guild.name} Discord!\nTo get my help, just type any of these commands in a server channel to start:\n\nCommand [Argument] :: Description\n!help                                  :: Gives all available commands\n!league [abbr]                 :: Gives a league role\n!lounge [name]               :: Creates a voice lounge in the General Lounges section\n\nBy default, you will only receive notifications on this server when you are mentioned. If you don't know how to set up notifications for channels on Discord, read the following:\n<https://support.discordapp.com/hc/en-us/articles/215253258-Notifications-Settings-101>\n\nSign up for NALTP S21/18 by messaging !naltp to me!`).catch(console.error);
+    if (userDBdata.oldroles !== null && userDBdata.oldroles !== "") {
+        let oldRolesParse = JSON.parse(userDBdata.oldroles);
+        await member.addRoles(oldRolesParse).catch(console.error);
+    }
+    else {
+        let noneRole = member.guild.roles.find(role => role.name === "None");
+        await member.addRole(noneRole).catch(console.error);
+    }
+    return await member.user.send(`Howdy ${member}, welcome back to the ${member.guild.name} Discord!\nTo get my help, just type any of these commands in a server channel to start:\n\nCommand [Argument] :: Description\n!help                                  :: Gives all available commands\n!league [abbr]                 :: Gives a league role\n!lounge [name]               :: Creates a voice lounge in the General Lounges section\n\nBy default, you will only receive notifications on this server when you are mentioned. If you don't know how to set up notifications for channels on Discord, read the following:\n<https://support.discordapp.com/hc/en-us/articles/215253258-Notifications-Settings-101>`).catch(console.error);
 };
