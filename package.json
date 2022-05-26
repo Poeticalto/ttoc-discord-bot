@@ -28,7 +28,7 @@
     "emoji-tree": "^1.1.2",
     "enmap": "^5.2.4",
     "erlpack": "github:discordapp/erlpack",
-    "eventsource": "^1.0.7",
+    "eventsource": "^2.0.2",
     "ffmpeg-static": "^2.7.0",
     "googleapis": "^45.0.0",
     "moment": "^2.24.0",
